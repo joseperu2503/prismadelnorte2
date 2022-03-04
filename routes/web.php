@@ -38,7 +38,7 @@ Route::get('/register', [RegisterController::class,'create'])
 Route::post('/register', [RegisterController::class,'store'])
     ->name('register.store');
 
-Route::get('/admin', [AdminController::class,'index'])
+Route::get('inicio', [AdminController::class,'index'])
     ->middleware('auth.admin')
     ->name('admin.index');
 
@@ -158,9 +158,6 @@ Route::resource('trabajadores',TrabajadorController::class)
     ->middleware('auth.admin');
 
 //Posts
-Route::get('inicio', [PostController::class,'index'])
-    ->middleware('auth.admin')
-    ->name('inicio.index');
 
 Route::resource('publicaciones',PostController::class)
     ->middleware('auth.profesor');
