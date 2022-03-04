@@ -1,0 +1,29 @@
+:root {
+    --color-body: #fff;
+    --color-header: #325587;
+    --color-header-font:#f0f1f3;
+
+    --color-curso-item: #6a4cce;
+    --color-curso-item-font: #f0f1f3;
+
+
+    --color-footer: #d6dde8;
+
+    /* tabla */
+
+    --color-titulo-curso: #575c63;
+
+    --color-header-tabla: #1783db;
+
+    --color-nota-aprobada: #1783db;
+    --color-nota-desaprobada: #da2313;
+
+    --color-body-tabla: #e4e4e4;
+
+
+    /*crud*/
+
+    --color-verde: #0bb58c;
+    --color-naranja: #ec9720;
+    --color-rojo: #c9302b;
+}
