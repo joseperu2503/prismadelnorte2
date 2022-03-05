@@ -7,11 +7,12 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    public function index(){
-        $posts = Post::select('*')
-        ->orderby('created_at','desc')
-        ->get();
-        return view('admin.index')->with('posts',$posts);
-        //return 'Admin';
+    public function index(Request $request){
+        $posts = Post::paginate(5);
+        if($request->ajax()){
+            $view = view('admin.posts',compact('posts'))->render();
+            return response()->json(['html'=>$view]);
+        }
+        return view('admin.index',compact('posts'));
     }
 }

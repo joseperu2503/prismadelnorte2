@@ -14,6 +14,7 @@ use App\Models\Genero;
 use App\Models\Grado;
 use App\Models\Nivel;
 use App\Models\niveles;
+use App\Models\Post;
 use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
@@ -344,9 +345,9 @@ class DatabaseSeeder extends Seeder
         // $curso->id_aula = '7';
         // $curso->save();
 
-        
-
-
+        Profesor::factory(10)->create();
+        Curso::factory(10)->create();
+        Post::factory(10)->create();
     }
 
 }

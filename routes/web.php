@@ -159,6 +159,8 @@ Route::resource('trabajadores',TrabajadorController::class)
 
 //Posts
 
+Route::get('/posts',[PostController::class, 'index']);
+
 Route::resource('publicaciones',PostController::class)
     ->middleware('auth.profesor');
 
