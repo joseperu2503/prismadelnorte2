@@ -9,7 +9,14 @@
 @section('content')
     <h1 class="titulo">Nuevo Alumno</h1>
     <div class="form-container">  
-        <form action="/alumnos" method="POST">
+        @if($errors->any())
+            <div class="alert alert-danger" role="alert">
+                @foreach ($errors->all() as $error)
+                    - {{ $error }} <br />
+                @endforeach
+            </div>
+        @endif
+        <form action="{{route('alumnos.store')}}" method="POST">
             @csrf    
             <h3 class="text-center text-body">Datos del alumno</h3>
             <label class="form-label">DNI*</label>
@@ -41,8 +48,7 @@
                 <option value="Ninguna">
             </datalist>
             <label class="form-label">Teléfono</label>
-            <input id="telefono" name="telefono" type="number" class="form-control mb-3" value="{{old('telefono')}}">
-            <input type="hidden" class="form-label" name="id_aula" value="{{$aula->id}}">
+            <input id="telefono" name="telefono" type="number" class="form-control mb-3" value="{{old('telefono')}}">           
             <label class="form-label">Email</label>
             <input id="email" name="email" type="text" class="form-control mb-3" value="{{old('email')}}">
             <label class="form-label">Dirección</label>
@@ -52,16 +58,36 @@
             <select id="id_genero" name="id_genero" class="form-select mb-3" required>
                 <option selected disabled value="">Seleccione una opción</option>
                 @foreach ($generos as $genero)
-                    <option value="{{$genero->id}}">{{$genero->genero}}</option>
+                    <option @if (old('id_genero') == $genero->id)
+                        selected
+                    @endif value="{{$genero->id}}">{{$genero->genero}}</option>
                 @endforeach                                     
             </select>
             <label class="form-label">Grado*</label>       
             <select id="id_grado" name="id_grado" class="form-select mb-3" required>
                 <option selected disabled value="">Seleccione una opción</option>
                 @foreach ($grados as $grado)
-                    <option value="{{$grado->id}}">{{$grado->grado}}</option>
+                    <option @if (old('id_grado') == $grado->id)
+                        selected
+                    @endif value="{{$grado->id}}">{{$grado->grado}}</option>
                 @endforeach                                     
             </select>
+
+            @if (isset($aula))
+                <input type="hidden" class="form-label" name="id_aula" value="{{$aula->id}}">
+                <input type="hidden" class="form-label" name="return_aula" value="1">
+            @else
+                <label class="form-label">Aula</label>       
+                <select id="id_aula" name="id_aula" class="form-select mb-3">
+                    <option selected disabled value="">Seleccione una opción</option>
+                    @foreach ($aulas as $aula)
+                        <option @if (old('id_aula') == $aula->id)
+                            selected
+                        @endif value="{{$aula->id}}">{{$aula->aula}}</option>
+                    @endforeach                                     
+                </select>
+            @endif
+            
             <label class="form-label">Contraseña*</label>
             <input id="password" name="password" type="text" class="form-control mb-3" value="{{old('password')}}" required>
 
@@ -88,17 +114,9 @@
             <input id="dni_apoderado" name="dni_apoderado" type="number" class="form-control mb-3" value="{{old('dni_apoderado')}}">
             <label class="form-label">Teléfono</label>
             <input id="telefono_apoderado" name="telefono_apoderado" type="number" class="form-control mb-3" value="{{old('telefono_apoderado')}}">
-
-
-            @if($errors->any())
-                <div class="alert alert-danger" role="alert">
-                    @foreach ($errors->all() as $error)
-                        - {{ $error }} <br />
-                    @endforeach
-                </div>
-            @endif
+         
             <div class="buttons-form">
-                <a href="/alumnos/{{$aula->id}}" class="btn btn-danger">Cancelar</a>
+                <a href="{{route('admin.alumnos',$aula->id)}}" class="btn btn-danger">Cancelar</a>
                 <button type="submit" class="btn btn-success">Guardar</button>
             </div>          
         </form>

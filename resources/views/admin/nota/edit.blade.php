@@ -18,7 +18,7 @@
             @endforeach
         </div>
     @endif
-    <form action="/curso/{{$curso->id}}/update" method="post" class="form-notas">
+    <form action="{{route('nota.update',$curso->id)}}" method="post" class="form-notas">
         @csrf
         @method('PUT')   
         <div class="tipo_evaluacion">
@@ -72,7 +72,7 @@
             </table>
         </div>
         <div class="buttons-form"> 
-            <a href="/curso/{{$curso->id}}" class="btn btn-danger">Cancelar</a>       
+            <a href="{{route('curso.perfil',$curso->id)}}" class="btn btn-danger">Cancelar</a>       
             <input type="submit" class = "btn btn-success" value = "Enviar">
         </div>
         <input type="hidden" name="id_evaluacion_antiguo" value="{{$evaluacion_datos->id_evaluacion}}">

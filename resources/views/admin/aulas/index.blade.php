@@ -9,7 +9,7 @@
 @section('content')
 
     <h1 class="titulo">Aulas</h1>
-    <a href="aulas/create" class="btn btn-success mb-4">Nuevo</a>
+    <a href="{{route('aula.create')}}" class="btn btn-success mb-4">Nuevo</a>
     <div class="table-responsive">
         <table id="table_id" class = "table table-hover">
             <thead>
@@ -28,9 +28,9 @@
                         <td>{{$aula->codigo}}</td>
                         <td>{{ucwords($aula->aula)}}</td>								
                         <td>                           
-                            <form action="{{route('aulas.destroy',$aula->id)}}" method="POST" class="botones formEliminar"> 
+                            <form action="{{route('aula.destroy',$aula->id)}}" method="POST" class="botones formEliminar"> 
                                 <a href="/alumnos/{{$aula->id}}" class="btn btn-success">Entrar</a>
-                                <a href="/aulas/{{$aula->id}}/edit" class="btn btn-warning">Editar</a>
+                                <a href="/aula/{{$aula->id}}/edit" class="btn btn-warning">Editar</a>
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger">Eliminar</button>

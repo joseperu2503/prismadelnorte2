@@ -14,21 +14,13 @@ use Illuminate\Support\Facades\DB;
 
 class NotaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create($id)
     {
         $curso = Curso::find($id);
@@ -58,12 +50,6 @@ class NotaController extends Controller
             ->with('alumnos',$alumnos);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request,$id)
     {
         $count = Nota::select('*')           
@@ -74,7 +60,7 @@ class NotaController extends Controller
             ->count();  
 
         if($count > 0){
-            return redirect()->back()->withErrors(
+            return redirect()->route('nota.create',$id)->withErrors(
                 ['message' =>'La evaluacion ingresada ya existe, verfique y vuelva a intentar.']
             )->withInput();
         }
@@ -105,23 +91,11 @@ class NotaController extends Controller
         }               
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id_curso,$id_bimestre,$id_evaluacion,$num_evaluacion)
     {
         $curso = Curso::find($id_curso);
@@ -251,7 +225,8 @@ class NotaController extends Controller
             return redirect()->route('curso.perfil',$id);
         }
         else {    
-            return redirect('/curso/'.$id.'/'. $request->get('id_bimestre_antiguo').'/'.$request->get('id_evaluacion_antiguo').'/'.$request->get('num_evaluacion_antiguo').'/editar_nota')
+            return redirect()
+            ->route('nota.edit',[$id,$request->get('id_bimestre_antiguo'),$request->get('id_evaluacion_antiguo'),$request->get('num_evaluacion_antiguo')])
             ->withErrors(
                 ['message' =>'La evaluacion ingresada ya existe, verfique y vuelva a modificar los datos.']
             )->withInput();

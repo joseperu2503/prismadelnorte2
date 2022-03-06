@@ -6,7 +6,7 @@
       <i class='bx bx-menu close'></i>
       <div class="info-header close">
         <img class="foto-perfil" src="{{ $alumno->foto_perfil }}" alt="foto de perfil">
-        <p>{{ $alumno->primer_nombre }}</p>
+        <p class="my-0">{{ $alumno->primer_nombre }}</p>
       </div>
     </div>
   </header>
@@ -17,7 +17,7 @@
     </div>
     <ul class="nav-links">
       <li>
-        <a href="/alumno">
+        <a href="/alumno/inicio">
           <i class='bx bx-grid-alt' ></i>
           <span class="link_name">Inicio</span>
         </a>

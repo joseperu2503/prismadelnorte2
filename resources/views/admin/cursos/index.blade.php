@@ -8,9 +8,8 @@
 @endsection
 
 @section('content')
-
     <h1 class="titulo">Cursos</h1>
-    <a href="cursos/create" class="btn btn-success mb-4">Nuevo</a>
+    <a href="{{route('curso.create')}}" class="btn btn-success mb-4">Nuevo</a>
 
     <div class="table-responsive">
         <table id="table_id" class = "table table-hover">
@@ -33,9 +32,9 @@
                     <td class="align-middle">{{ucwords($curso->profesor->primer_nombre." ".$curso->profesor->apellido_paterno)}}</td>	
                     <td class="align-middle">{{$curso->aula->aula}}</td>								
                     <td class="align-middle">     
-                        <form action="{{route('cursos.destroy',$curso->id)}}" method="POST" class="botones formEliminar"> 
-                            <a href="/curso/{{$curso->id}}" class="btn btn-success">Entrar</a>
-                            <a href="/cursos/{{$curso->id}}/edit" class="btn btn-warning">Editar</a>
+                        <form action="{{route('curso.destroy',$curso->id)}}" method="POST" class="botones formEliminar"> 
+                            <a href="{{route('curso.perfil',$curso->id)}}" class="btn btn-success">Entrar</a>
+                            <a href="{{route('curso.edit',$curso->id)}}" class="btn btn-warning">Editar</a>
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">Eliminar</button>
@@ -55,4 +54,5 @@
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.11.4/b-2.2.2/b-html5-2.2.2/b-print-2.2.2/datatables.min.js"></script>
     <script src="{{asset('js/datatable.js')}}"></script>
     <script src="{{asset('js/sweetAlert.js')}}"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endsection

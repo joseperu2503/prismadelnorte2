@@ -15,39 +15,33 @@ use App\Models\Profesor;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+date_default_timezone_set("America/Lima");
 
 class AlumnoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index($aula_id)
+    public function index()
     {
-        $aula = Aula::find($aula_id);
-        return view('admin.alumno.index')->with('aula',$aula);
+        $alumnos = Alumno::with(['grado','aula'])->get();
+        return view('admin.alumnos.alumnos_todos')->with('alumnos',$alumnos);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function createTodos()
+    {   
+        $grados = Grado::all();
+        $aulas = Aula::all();
+        $generos = Genero::all();
+        return view('admin.alumnos.create')->with('aulas',$aulas)->with('grados',$grados)->with('generos',$generos);
+    }
+
+
     public function create($id)
     {   
         $aula = Aula::find($id);
         $grados = Grado::all();
         $generos = Genero::all();
-        return view('admin.alumno.create')->with('aula',$aula)->with('grados',$grados)->with('generos',$generos);
+        return view('admin.alumnos.create')->with('aula',$aula)->with('grados',$grados)->with('generos',$generos);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -58,59 +52,54 @@ class AlumnoController extends Controller
             'primer_nombre' => 'required',
             'apellido_paterno' => 'required',
             'apellido_materno' => 'required',
+            'fecha_nacimiento' => 'required|date',
             'id_aula' => 'required',
             'id_grado' => 'required',
             'id_genero' => 'required',
-            'password' => 'required'
+            'password' => 'required|alpha|max:4'
         ]);
 
-        Alumno::create([
-            'foto_perfil' => '/storage/fotos_perfil/estudiante.png'
-        ]+$request->all());
-    
+        if(User::where("dni",$request->get('dni'))->first()){
+            return redirect()->route('alumno.create',$request->get('id_aula'))->withErrors(
+                ['message' =>'El dni ingresado ya está registrado en el sistema.']
+            )->withInput();         
+        }
+        else{
+            Alumno::create([
+                'foto_perfil' => '/storage/fotos_perfil/estudiante.png'
+            ]+$request->all());
+        
 
-        $user = new User();
-        $user->dni = $request->get('dni');
-        $user->password = $request->get('password');
-        $user->role = 'alumno';
-        $user->save();
-
-        return redirect('/alumnos/'.$request->get('id_aula'));
+            $user = new User();
+            $user->dni = $request->get('dni');
+            $user->password = $request->get('password');
+            $user->role = 'alumno';
+            $user->save();
+            
+            if($request->get('return_aula')){
+                return redirect()->route('admin.alumnos',$request->get('id_aula'));
+            }else{
+                return redirect()->route('alumnos.index');
+            }
+            
+        }
+        
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $alumno = Alumno::find($id);
         $aulas = Aula::all();
         $grados = Grado::all();
         $generos = Genero::all();
-        return view('admin.alumno.edit')->with('alumno',$alumno)->with('aulas',$aulas)->with('grados',$grados)->with('generos',$generos);      
+        return view('admin.alumnos.edit')->with('alumno',$alumno)->with('aulas',$aulas)->with('grados',$grados)->with('generos',$generos);      
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {   
         $request->validate([
@@ -139,32 +128,43 @@ class AlumnoController extends Controller
             $user->save();
         }
         $alumno->update($request->all());
-        return redirect('/alumnos/'.$request->get('id_aula'));
+        return redirect()->route('admin.alumnos',$request->get('id_aula'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         $alumno = Alumno::find($id);
         $user = User::select('*')->where('dni', $alumno->dni)->first();
         $user->delete();
         $alumno->delete();
-        return redirect()->back();
+        return redirect()->route('admin.alumnos',$alumno->id_aula);
     }
 
-    public function index_usuario()
+
+
+
+
+    public function inicio(Request $request)
     {
         $alumno = Alumno::where('dni', auth()->user()->dni)->first();
-        $posts = Post::select('*')
-        ->orderby('created_at','desc')
-        ->get();
+        $id_aula=$alumno->id_aula;
+        $posts = Post::with(['user','curso.aula'])
+            ->whereHas('curso.aula', function ($query)use( $id_aula){
+                $query->where('id', $id_aula);
+            })
+            ->orWhereHas('user', function ($query){
+                    $query->where('role', 'admin')              
+                      ->whereNull('id_curso');
+            })          
+            ->orderby('created_at','desc')
+            ->paginate(5);
+
+        if($request->ajax()){
+            $view = view('alumno.posts',compact('posts'))->render();
+            return response()->json(['html'=>$view]);
+        }
         
-        return view('admin.alumno.usuario.index')->with('alumno',$alumno)->with('posts',$posts);
+        return view('alumno.inicio.index')->with('alumno',$alumno)->with('posts',$posts);
     }
 
     public function perfil_usuario()
@@ -173,7 +173,7 @@ class AlumnoController extends Controller
         $alumno = DB::table('alumnos')->where('dni', $dni)->first();
         $id_aula = $alumno->id_aula;
         $aula = DB::table('aulas')->where('id', $id_aula)->first();
-        return view('admin.alumno.usuario.perfil')->with('alumno',$alumno)->with('aula',$aula);
+        return view('alumno.perfil')->with('alumno',$alumno)->with('aula',$aula);
     }
 
     public function update_foto(Request $request,$id)
@@ -192,7 +192,7 @@ class AlumnoController extends Controller
             }
             $alumno->update($datos);         
         }
-        return redirect()->route('alumno.usuario.perfil');
+        return redirect()->route('alumno.perfil');
                   
     }
 
@@ -202,10 +202,10 @@ class AlumnoController extends Controller
         $alumno = DB::table('alumnos')->where('dni', $dni)->first();
         $id_aula = $alumno->id_aula;
         $cursos = DB::table('cursos')->where('id_aula', $id_aula)->get();
-        return view('admin.alumno.usuario.cursos')->with('cursos',$cursos)->with('alumno',$alumno);
+        return view('alumno.cursos')->with('cursos',$cursos)->with('alumno',$alumno);
     }
 
-    public function curso_usuario($codigo)
+    public function curso_usuario(Request $request, $codigo)
     {   
         $dni = auth()->user()->dni;
         $alumno = DB::table('alumnos')->where('dni', $dni)->first();
@@ -241,22 +241,37 @@ class AlumnoController extends Controller
                 }
             $notas_tabla += [$bimestre->id => $notas_bimestre];           
         }
-        return view('admin.alumno.usuario.curso')->with('curso',$curso)
+
+        $posts = Post::with(['user','curso.aula'])
+            ->where('id_curso',$curso->id)     
+            ->orderby('created_at','desc')
+            ->paginate(5);
+
+        if($request->ajax()){
+            $view = view('alumno.posts',compact('posts'))->render();
+            return response()->json(['html'=>$view]);
+        }   
+
+
+
+        return view('alumno.curso')
+            ->with('curso',$curso)
             ->with('alumno',$alumno)
             ->with('bimestres',$bimestres)
             ->with('notas_tabla',$notas_tabla)
-            ->with('evaluaciones',$evaluaciones);
+            ->with('evaluaciones',$evaluaciones)
+            ->with('posts',$posts);
     }
 
-    public function asistencia_usuario()
+    public function asistencia()
     {   
         $dni = auth()->user()->dni;
         $alumno = DB::table('alumnos')->where('dni', $dni)->first();
         $asistencias = Asistencia::select('*')                  
-            ->where('id_alumno', $alumno->id)
+            ->where('dni',  $dni)
             ->orderBy('created_at', 'desc')
             ->get();
-        return view('admin.alumno.usuario.asistencia')->with('asistencias',$asistencias)->with('alumno',$alumno);
+        return view('alumno.asistencia')->with('asistencias',$asistencias)->with('alumno',$alumno);
     }
     
 }

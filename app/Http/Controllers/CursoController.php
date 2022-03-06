@@ -13,35 +13,14 @@ use Illuminate\Support\Facades\DB;
 
 class CursoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {   
-        $cursos = Curso::all();
-        return view('admin.curso.index')->with('cursos',$cursos);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+   
     public function create()
     {    
         $profesores = Profesor::all();
         $aulas = Aula::all();
-        return view('admin.curso.create')->with('aulas',$aulas)->with('profesores',$profesores);
+        return view('admin.cursos.create')->with('aulas',$aulas)->with('profesores',$profesores);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -53,41 +32,22 @@ class CursoController extends Controller
 
         $curso = $request->all();       
         Curso::create($curso);
-        return redirect()->route('cursos.index');
+        return redirect()->route('admin.cursos');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {   
         $profesores = Profesor::all();
         $aulas = Aula::all();
         $curso = Curso::find($id);
-        return view('admin.curso.edit')->with('curso',$curso)->with('aulas',$aulas)->with('profesores',$profesores);
+        return view('admin.cursos.edit')->with('curso',$curso)->with('aulas',$aulas)->with('profesores',$profesores);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -99,23 +59,17 @@ class CursoController extends Controller
 
         $curso = Curso::find($id);
         $curso->update($request->all());
-        return redirect()->route('cursos.index');
+        return redirect()->route('admin.cursos');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         $curso = Curso::find($id);
         $curso->delete();
-        return redirect()->back();
+        return redirect()->route('admin.cursos');
     }
 
-    public function perfil($id)
+    public function perfil(Request $request, $id)
     {   
         $curso = Curso::find($id);
         $id_profesor = Curso::select('*')           
@@ -139,43 +93,54 @@ class CursoController extends Controller
         $evaluaciones = Nota::select('evaluacions.evaluacion','notas.num_evaluacion','notas.id_evaluacion','notas.id_bimestre')   
             ->leftjoin('evaluacions', 'notas.id_evaluacion', '=', 'evaluacions.id')        
             ->where('id_curso', $id)
+            ->orderBy('id_bimestre', 'asc')
+            ->orderBy('id_evaluacion', 'asc')
+            ->orderBy('num_evaluacion', 'asc')
             ->distinct()
             ->get();
                       
-        $posts = Post::select('*')
-            ->orderby('created_at','desc')
-            ->get();
-
-            $notas_tabla = [];
-            foreach($bimestres as $bimestre){
-                $notas_bimestre = [];        
-                foreach($alumnos as $alumno){
-                    $notas_alumno = [];              
-                    foreach($evaluaciones as $evaluacion){   
-                        if($evaluacion->id_bimestre == $bimestre->id){
-                            $nota = DB::table('notas')                  
-                            ->where('id_curso', $id)
-                            ->where('id_alumno', $alumno->id)
-                            ->where('id_bimestre', $bimestre->id)
-                            ->where('id_evaluacion', $evaluacion->id_evaluacion)
-                            ->where('num_evaluacion', $evaluacion->num_evaluacion)
-                            ->first();    
-                            if(isset($nota)) {
-                               $nota2=$nota->nota;
-                            }else{
-                                $nota2='NSP';
-                            }
-                            $notas_alumno += ["$evaluacion->id_evaluacion $evaluacion->num_evaluacion" => $nota2];  
-                        }                             
-                    }
-                    $notas_bimestre += [$alumno->id => $notas_alumno];
+        $notas_tabla = [];
+        foreach($bimestres as $bimestre){
+            $notas_bimestre = [];        
+            foreach($alumnos as $alumno){
+                $notas_alumno = [];              
+                foreach($evaluaciones as $evaluacion){   
+                    if($evaluacion->id_bimestre == $bimestre->id){
+                        $nota = DB::table('notas')                  
+                        ->where('id_curso', $id)
+                        ->where('id_alumno', $alumno->id)
+                        ->where('id_bimestre', $bimestre->id)
+                        ->where('id_evaluacion', $evaluacion->id_evaluacion)
+                        ->where('num_evaluacion', $evaluacion->num_evaluacion)
+                        ->first();    
+                        if(isset($nota)) {
+                            $nota2=$nota->nota;
+                        }else{
+                            $nota2='NSP';
+                        }
+                        $notas_alumno += ["$evaluacion->id_evaluacion $evaluacion->num_evaluacion" => $nota2];  
+                    }                             
                 }
-
-                $notas_tabla += [$bimestre->id => $notas_bimestre];           
+                $notas_bimestre += [$alumno->id => $notas_alumno];
             }
 
-        
-        return view('admin.curso.perfil.index')
+            $notas_tabla += [$bimestre->id => $notas_bimestre];           
+        }
+
+        $posts = Post::with(['user','curso.aula'])
+            ->where('id_curso',$id)     
+            ->orderby('created_at','desc')
+            ->paginate(5);
+
+        if($request->ajax()){
+            $view = view('admin.posts',compact('posts'))->render();
+            return response()->json(['html'=>$view]);
+        }   
+
+
+
+
+        return view('admin.cursos.perfil.index')
             ->with('curso',$curso)
             ->with('profesor',$profesor)
             ->with('aula',$aula)

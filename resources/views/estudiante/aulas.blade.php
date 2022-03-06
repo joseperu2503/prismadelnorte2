@@ -1,1 +1,0 @@
-aulas del estudiante

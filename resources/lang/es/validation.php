@@ -29,7 +29,7 @@ return [
     ],
     "boolean"          => "El campo :attribute debe tener un valor verdadero o falso.",
     "confirmed"        => "La confirmación de :attribute no coincide.",
-    "date"             => ":attribute no es una fecha válida.",
+    "date"             => "La :attribute no es una fecha válida.",
     "date_format"      => ":attribute no corresponde al formato :format.",
     "different"        => ":attribute y :other deben ser diferentes.",
     "digits"           => "El campo :attribute debe tener :digits dígitos.",
@@ -114,6 +114,7 @@ return [
         'direccion' => 'Dirección',
         'genero' => 'Género',
         'password' => 'Contraseña',
+        'fecha_nacimiento' => 'fecha de nacimiento',
     ],
 
 ];

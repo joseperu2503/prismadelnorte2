@@ -19,7 +19,7 @@
                 @endforeach
             </div>
         @endif  
-        <form action="/publicaciones" method="POST" enctype="multipart/form-data">
+        <form action="{{route('publicaciones.store')}}" method="POST" enctype="multipart/form-data">
             @csrf
             <label class="form-label">Título</label>
             <input id="titulo" name="titulo" type="text" class="form-control mb-3" value="{{old('titulo')}}">           
@@ -43,7 +43,7 @@
                 <input type="hidden" name="id_curso" value="{{$curso->id}}">
             @endif
             <div class="buttons-form">
-                <a href="/publicaciones" class="btn btn-danger">Cancelar</a>
+                <a href="{{url()->previous()}}" class="btn btn-danger">Cancelar</a>
                 <button type="submit" class="btn btn-success">Publicar</button>
             </div>          
         </form>

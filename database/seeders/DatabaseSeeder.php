@@ -36,59 +36,73 @@ class DatabaseSeeder extends Seeder
         $genero->save();
 
         $grado = new Grado();
-        $grado->grado = '3 años';
+        $grado->grado = '3 Años';
+        $grado->abreviatura = '3 Años';
         $grado->save();
 
         $grado = new Grado();
-        $grado->grado = '4 años';
+        $grado->grado = '4 Años';
+        $grado->abreviatura = '4 Años';
         $grado->save();
 
         $grado = new Grado();
-        $grado->grado = '5 años';
+        $grado->grado = '5 Años';
+        $grado->abreviatura = '5 Años';
         $grado->save();
 
         $grado = new Grado();
         $grado->grado = 'Primer Grado de Primaria';
+        $grado->abreviatura = '1° Primaria';
         $grado->save();
 
         $grado = new Grado();
         $grado->grado = 'Segundo Grado de Primaria';
+        $grado->abreviatura = '2° Primaria';
         $grado->save();
 
         $grado = new Grado();
         $grado->grado = 'Tercer Grado de Primaria';
+        $grado->abreviatura = '3° Primaria';
         $grado->save();
 
         $grado = new Grado();
         $grado->grado = 'Cuarto Grado de Primaria';
+        $grado->abreviatura = '4° Primaria';
         $grado->save();
 
         $grado = new Grado();
         $grado->grado = 'Quinto Grado de Primaria';
+        $grado->abreviatura = '5° Primaria';
         $grado->save();
 
         $grado = new Grado();
         $grado->grado = 'Sexto Grado de Primaria';
+        $grado->abreviatura = '6° Primaria';
         $grado->save();
 
         $grado = new Grado();
         $grado->grado = 'Primer Año de Secundaria';
+        $grado->abreviatura = '1° Secundaria';
         $grado->save();
 
         $grado = new Grado();
         $grado->grado = 'Segundo Año de Secundaria';
+        $grado->abreviatura = '2° Secundaria';
         $grado->save();
 
         $grado = new Grado();
         $grado->grado = 'Tercer Año de Secundaria';
+        $grado->abreviatura = '3° Secundaria';
         $grado->save();
 
         $grado = new Grado();
         $grado->grado = 'Cuarto Año de Secundaria';
+        $grado->abreviatura = '4° Secundaria';
         $grado->save();
 
         $grado = new Grado();
         $grado->grado = 'Quinto Año de Secundaria';
+        $grado->abreviatura = '5° Secundaria';
         $grado->save();
 
 
@@ -195,6 +209,14 @@ class DatabaseSeeder extends Seeder
         $aula->aula = 'Pre';
         $aula->id_nivel = '3';
         $aula->abreviatura = 'Pre';
+
+        $aula->save();
+
+        $aula = new Aula;
+        $aula->codigo = 'NOASIGNADO';
+        $aula->aula = 'No asignado';
+        $aula->id_nivel = '3';
+        $aula->abreviatura = 'No asignado';
 
         $aula->save();
 
@@ -347,7 +369,8 @@ class DatabaseSeeder extends Seeder
 
         Profesor::factory(10)->create();
         Curso::factory(10)->create();
-        Post::factory(10)->create();
+        Post::factory(100)->create();
+        // Alumno::factory(100)->create();
     }
 
 }

@@ -10,7 +10,7 @@
 @section('content')
     <h1 class="titulo">Editar Publicación</h1>
     <div class="form-container">  
-        <form action="/publicaciones/{{$post->id}}" method="POST" enctype="multipart/form-data">
+        <form action="{{route('publicaciones.update',$post->id)}}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <label class="form-label">Título</label>
@@ -38,7 +38,7 @@
                 </div>
             @endif
             <div class="buttons-form">
-                <a href="/publicaciones" class="btn btn-danger">Cancelar</a>
+                <a href="{{url()->previous()}}" class="btn btn-danger">Cancelar</a>
                 <button type="submit" class="btn btn-success">Guardar</button>
             </div>          
         </form>

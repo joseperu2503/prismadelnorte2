@@ -43,4 +43,14 @@ class Alumno extends Model
     public function setPasswordAttribute($password){
         $this->attributes['password'] = bcrypt($password);
     }
+
+    public function grado(){
+        return $this->belongsTo(Grado::class,'id_grado');
+    } 
+
+    public function aula(){
+        return $this->belongsTo(Aula::class,'id_aula');
+    }
+
+
 }

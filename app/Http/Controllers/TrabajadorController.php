@@ -8,33 +8,12 @@ use Illuminate\Http\Request;
 
 class TrabajadorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $trabajadores = Trabajador::all();
-        return view('admin.trabajador.index')->with('trabajadores',$trabajadores);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+   
     public function create()
     {
         return view('admin.trabajador.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -58,39 +37,20 @@ class TrabajadorController extends Controller
         $user->save();
 
 
-        return redirect()->route('trabajadores.index');
+        return redirect()->route('admin.trabajadores');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $trabajador = Trabajador::find($id);
         return view('admin.trabajador.edit')->with('trabajador',$trabajador);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -114,7 +74,7 @@ class TrabajadorController extends Controller
         }
         $trabajador->update($request->all());
         
-        return redirect()->route('trabajadores.index');
+        return redirect()->route('admin.trabajadores');
     
     }
 

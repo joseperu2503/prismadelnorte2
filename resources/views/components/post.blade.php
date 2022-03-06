@@ -6,7 +6,7 @@
             <i class="fas fa-ellipsis-h"></i>
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a class="dropdown-item" href="/publicaciones/{{$post->id}}/edit">Editar</a></li>
+            <li><a class="dropdown-item" href="{{route('publicaciones.edit',$post->id)}}">Editar</a></li>
             <li>
                 <form action="{{route('publicaciones.destroy',$post->id)}}" method="POST" class="dropdown-item formEliminar">
                     @csrf
@@ -35,11 +35,14 @@
 
 
         @if (isset($post->id_curso))
-            <a @if (auth()->user()->role=='admin' || auth()->user()->role=='profesor') href="/curso/{{$post->curso->id}}"
-            @elseif(auth()->user()->role=='alumno')  href="/alumno/cursos/{{$post->curso->codigo}}" 
-            @endif class="btn btn-outline-primary btn-sm mt-4 rounded-pill">
-                {{$post->curso->nombre}}
-            </a>
+            <div>
+                <a @if (auth()->user()->role=='admin' || auth()->user()->role=='profesor') href="/curso_perfil/{{$post->curso->id}}"
+                @elseif(auth()->user()->role=='alumno')  href="/alumno/cursos/{{$post->curso->codigo}}" 
+                @endif class="btn btn-outline-primary btn-sm mt-4 rounded-pill">
+                    {{$post->curso->nombre}}
+                </a>
+            </div>
+            
         @endif  
             
             

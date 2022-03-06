@@ -19,24 +19,24 @@ class SessionsController extends Controller
             );
         }else{
             if(auth()->user()->role == 'admin'){
-                return redirect()->route('inicio.index');
+                return redirect()->route('admin.inicio');
             }
             else if(auth()->user()->role == 'alumno') {
                 $alumno = DB::table('alumnos')->where('dni', auth()->user()->dni)->first();
 
                 if($alumno->id_genero=='1'){
                     return redirect()
-                    ->route('alumno.usuario.index')
+                    ->route('alumno.inicio')
                     ->with('message', 'Bienvenido '.$alumno->primer_nombre.' '.$alumno->apellido_paterno);
                 }else if($alumno->id_genero=='2'){
                     return redirect()
-                    ->route('alumno.usuario.index')
+                    ->route('alumno.inicio')
                     ->with('message', 'Bienvenida '.$alumno->primer_nombre.' '.$alumno->apellido_paterno);
                 }
                
             }
             else if(auth()->user()->role == 'profesor'){
-                return redirect()->route('profesor.usuario.index');
+                return redirect()->route('profesor.inicio');
             }
             else {
                 return redirect()->to('/');

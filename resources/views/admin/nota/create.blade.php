@@ -18,7 +18,7 @@
             @endforeach
         </div>
     @endif  
-    <form action="/curso/{{$curso->id}}/store" method="post" class="form-notas">
+    <form action="{{route('nota.store',$curso->id)}}" method="post" class="form-notas">
         @csrf
         @method('PUT')         
         <div class="tipo_evaluacion">
@@ -64,7 +64,7 @@
             </table>
         </div>
         <div class="buttons-form"> 
-            <a href="/curso/{{$curso->id}}" class="btn btn-danger">Cancelar</a>       
+            <a href="{{route('curso.perfil',$curso->id)}}" class="btn btn-danger">Cancelar</a>       
             <input type="submit" class = "btn btn-success" value = "Enviar">
         </div>
         <input name="id_curso" type="hidden" value="{{$curso->id}}">

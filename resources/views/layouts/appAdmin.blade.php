@@ -6,7 +6,7 @@
       <i class='bx bx-menu close'></i>
       <div class="info-header close">
         <img class="foto-perfil" src="/storage/fotos_perfil/usuario.png" alt="foto de perfil">
-        <p>Admin</p>
+        <p class="my-0">Admin</p>
       </div>
     </div>
   </header>
@@ -17,25 +17,30 @@
     </div>
     <ul class="nav-links">
       <li>
-        <a href="/inicio">
+        <a href="{{route('admin.inicio')}}">
           <i class='bx bx-grid-alt' ></i>
           <span class="link_name">Inicio</span>
         </a>
         <ul class="sub-menu blank">
-          <li><a class="link_name" href="#">Inicio</a></li>
+          <li><a class="link_name" href="{{route('admin.inicio')}}">Inicio</a></li>
         </ul>
       </li>
       <li>
-        <a href="/aulas">
-          <i class="fas fa-graduation-cap"></i>
-          <span class="link_name">Aulas</span>
-        </a>
-        <ul class="sub-menu blank">
-          <li><a class="link_name" href="#">Aulas</a></li>
+        <div class="iocn-link">
+          <a href="{{route('alumnos.index')}}">
+            <i class="fas fa-graduation-cap"></i>
+            <span class="link_name">Alumnos</span>
+          </a>
+          <i class='bx bxs-chevron-down arrow' ></i>
+        </div>
+        <ul class="sub-menu">
+          <li><a class="link_name" href="{{route('alumnos.index')}}">Alumnos</a></li>
+          <li><a href="{{route('alumnos.index')}}">Todos los alumnos</a></li>     
+          <li><a href="{{route('admin.aulas')}}">Alumnos por aula</a></li>   
         </ul>
       </li>
       <li>
-        <a href="/profesores">
+        <a href="{{route('admin.profesores')}}">
           <i class="fas fa-chalkboard-teacher"></i>
           <span class="link_name">Profesores</span>
         </a>
@@ -44,7 +49,7 @@
         </ul>
       </li>
       <li>
-        <a href="/cursos">
+        <a href="{{route('admin.cursos')}}">
           <i class="fas fa-book"></i>
           <span class="link_name">Cursos</span>
         </a>
@@ -54,14 +59,14 @@
       </li>
       <li>
         <div class="iocn-link">
-          <a href="#">
+          <a href="/asistencia_alumnos">
             <i class="fas fa-check-double"></i>
             <span class="link_name">Asistencia</span>
           </a>
           <i class='bx bxs-chevron-down arrow' ></i>
         </div>
         <ul class="sub-menu">
-          <li><a class="link_name" href="#">Asistencia</a></li>
+          <li><a class="link_name" href="/asistencia_alumnos">Asistencia</a></li>
           <li><a href="/asistencia_alumnos">Alumnos</a></li>
           <li><a href="/asistencia_profesores">Profesores</a></li>
           <li><a href="/asistencia_trabajadores">Trabajadores</a></li>
@@ -69,7 +74,7 @@
         </ul>
       </li>
       <li>
-        <a href="/trabajadores">
+        <a href="{{route('admin.trabajadores')}}">
           <i class="fas fa-briefcase"></i>
           <span class="link_name">Personal Complementario</span>
         </a>

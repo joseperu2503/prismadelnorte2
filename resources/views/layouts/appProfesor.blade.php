@@ -6,7 +6,7 @@
       <i class='bx bx-menu close'></i>
       <div class="info-header close">
         <img class="foto-perfil" src="/storage/fotos_perfil/{{ $profesor->foto_perfil }}" alt="foto de perfil">
-        <p>{{ $profesor->primer_nombre }}</p>
+        <p class="my-2">{{ $profesor->primer_nombre }}</p>
       </div>
     </div>
   </header>
@@ -18,7 +18,7 @@
     <ul class="nav-links">
       <li>
         <a @if (auth()->user()->role == 'profesor')
-          href="/profesor"
+          href="{{route('profesor.inicio')}}"
         @else
           href="/profesor/{{ $profesor->id }}"    
         @endif 
@@ -33,7 +33,7 @@
     
       <li>
         <a @if (auth()->user()->role == 'profesor')
-          href="{{route('profesor.mis_cursos')}}"
+          href="{{route('profesor.cursos')}}"
         @else
           href="/profesor/{{ $profesor->id }}/cursos"    
         @endif 

@@ -7,7 +7,7 @@
 @section('content')
     <h1 class="titulo">Nuevo Profesor</h1>
     <div class="form-container">  
-        <form action="/profesores" method="POST">
+        <form action="/profesor" method="POST">
             @csrf
             <label class="form-label">DNI*</label>
             <input id="dni" name="dni" type="number" class="form-control mb-3" value="{{old('dni')}}">

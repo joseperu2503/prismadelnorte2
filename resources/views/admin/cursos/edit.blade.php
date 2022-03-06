@@ -7,7 +7,7 @@
 @section('content')
     <h1 class="titulo">Editar Curso</h1>
     <div class="form-container">  
-        <form action="/cursos/{{$curso->id}}" method="POST">
+        <form action="{{route('curso.update',$curso->id)}}" method="POST">
             @csrf
             @method('PUT')
             <label class="form-label">Código*</label>
@@ -50,7 +50,7 @@
                 </div>
             @endif
             <div class="buttons-form">
-                <a href="/cursos" class="btn btn-danger">Cancelar</a>
+                <a href="{{route('admin.cursos')}}" class="btn btn-danger">Cancelar</a>
                 <button type="submit" class="btn btn-success">Actualizar</button>
             </div>          
         </form>

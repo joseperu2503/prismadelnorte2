@@ -24,7 +24,7 @@
                         <td class="align-middle">{{$curso->codigo}}</td>
                         <td class="align-middle">{{$curso->nombre}}</td>
                         <td class="align-middle">{{$curso->aula->aula}}</td>
-                        <td><a href="/curso/{{$curso->id}}" class="btn btn-success">Entrar</a></td>
+                        <td><a href="{{route('curso.perfil',$curso->id)}}" class="btn btn-success">Entrar</a></td>
                     </tr>      
                 @endforeach        
             </tbody>

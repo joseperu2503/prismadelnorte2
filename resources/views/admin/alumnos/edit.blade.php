@@ -15,7 +15,7 @@
                 @endforeach
             </div>
         @endif
-    <form action="/alumnos/{{$alumno->id}}" method="POST">
+    <form action="{{route('alumnos.update',$alumno->id)}}" method="POST">
         @csrf
         @method('PUT')
         <h3 class="text-center text-body">Datos del alumno</h3>
@@ -114,7 +114,7 @@
         <input id="telefono_apoderado" name="telefono_apoderado" type="number" class="form-control mb-3" value="{{$alumno->telefono_apoderado}}">
         
         <div class="buttons-form">
-            <a href="/alumnos/{{$alumno->id_aula}}" class="btn btn-danger">Cancelar</a>
+            <a href="{{route('admin.alumnos',$alumno->id_aula)}}" class="btn btn-danger">Cancelar</a>
             <button type="submit" class="btn btn-success" >Actualizar</button>
         </div>          
     </form>

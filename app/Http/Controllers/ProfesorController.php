@@ -12,34 +12,13 @@ use Illuminate\Support\Facades\DB;
 
 class ProfesorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $profesores = Profesor::all();
-        return view('admin.profesor.index')->with('profesores',$profesores);
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         $generos = Genero::all();
-        return view('admin.profesor.create')->with('generos',$generos);
+        return view('admin.profesores.create')->with('generos',$generos);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -71,40 +50,21 @@ class ProfesorController extends Controller
         $user->role = 'profesor';
         $user->save();
 
-        return redirect()->route('profesores.index');
+        return redirect()->route('admin.profesores');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $profesor = Profesor::find($id);
         $generos = Genero::all();
-        return view('admin.profesor.edit')->with('profesor',$profesor)->with('generos',$generos);
+        return view('admin.profesores.edit')->with('profesor',$profesor)->with('generos',$generos);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request,$id)
     {
         $request->validate([
@@ -120,6 +80,7 @@ class ProfesorController extends Controller
         ]);
 
         $profesor = Profesor::find($id);
+        //si cambia de contraseña o dni, debe cambiarse en la tabla user tambien
         if($request->get('password')!='' || $request->get('dni') != $profesor->dni){
             $user = User::select('*')->where('dni', $profesor->dni)->first();
             if($request->get('dni') != $profesor->dni){
@@ -130,6 +91,7 @@ class ProfesorController extends Controller
             }                  
             $user->save();
         }
+        //si cambia de genero debe cambiar su foto de perfil
         if($request->get('id_genero')){
             if($request->get('id_genero')=='1'){
                 $profesor->foto_perfil = 'man.png';
@@ -140,22 +102,14 @@ class ProfesorController extends Controller
         
         $profesor->update($request->all());
 
-        
-        return redirect()->route('profesores.index');
-    
+        return redirect()->route('admin.profesores');   
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         $profesor = Profesor::find($id);
         $profesor->delete();
-        return redirect()->back();
+        return redirect()->route('admin.profesores');
     }
 
     public function perfil($id)
@@ -164,7 +118,7 @@ class ProfesorController extends Controller
         $posts = Post::select('*')
             ->orderby('created_at','desc')
             ->get();
-        return view('admin.profesor.perfil.index')->with('profesor',$profesor)->with('posts',$posts);
+        return view('profesor.inicio')->with('profesor',$profesor)->with('posts',$posts);
     }
 
     public function cursos($id)
@@ -174,17 +128,17 @@ class ProfesorController extends Controller
             ->where('id_profesor', $profesor->id)
             ->get();
 
-        return view('admin.profesor.perfil.cursos')->with('profesor',$profesor)->with('cursos',$cursos);
+        return view('profesor.cursos')->with('profesor',$profesor)->with('cursos',$cursos);
     }
 
-    public function index_usuario()
+    public function inicio()
     {
         $profesor = Profesor::where('dni', auth()->user()->dni)->first();
         $posts = Post::select('*')
         ->orderby('created_at','desc')
         ->get();
 
-        return view('admin.profesor.perfil.index')->with('profesor',$profesor)->with('posts',$posts);
+        return view('profesor.inicio')->with('profesor',$profesor)->with('posts',$posts);
     }
 
     public function cursos_usuario()
@@ -194,7 +148,7 @@ class ProfesorController extends Controller
             ->where('id_profesor', $profesor->id)
             ->get();
 
-        return view('admin.profesor.perfil.cursos')->with('profesor',$profesor)->with('cursos',$cursos);
+        return view('profesor.cursos')->with('profesor',$profesor)->with('cursos',$cursos);
     }
 
 }

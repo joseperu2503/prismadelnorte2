@@ -43,13 +43,6 @@ class PostController extends Controller
  
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         
@@ -70,48 +63,29 @@ class PostController extends Controller
         
         if(auth()->user()->role=='admin'){
             if($request->id_curso){
-                return redirect()->route('curso.perfil',[$request->id_curso]);   
+                return redirect()->route('curso.perfil',$request->id_curso);   
             }else{
-                return redirect()->route('publicaciones.index');
+                return redirect()->route('admin.inicio');
             }
             
         }
         else if(auth()->user()->role=='profesor'){
-            return redirect()->route('curso.perfil',[$request->id_curso]);
+            return redirect()->route('curso.perfil',$request->id_curso);
         }
     
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $post = Post::find($id);
         return view('admin.post.edit')->with('post',$post);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {      
         $request->validate([
@@ -130,13 +104,13 @@ class PostController extends Controller
 
         if(auth()->user()->role=='admin'){
             if($post->id_curso){
-                return redirect()->route('curso.perfil',[$post->id_curso]);   
+                return redirect()->route('curso.perfil',$post->id_curso);   
             }else{
-                return redirect()->route('publicaciones.index');
+                return redirect()->route('admin.inicio');
             }           
         }
         else if(auth()->user()->role=='profesor'){
-            return redirect()->route('curso.perfil',[$post->id_curso]);
+            return redirect()->route('curso.perfil',$post->id_curso);
         }
     }
 
@@ -151,6 +125,6 @@ class PostController extends Controller
         $post = Post::find($id);
         Storage::delete(str_replace("storage", "public", $post->imagen)); 
         $post->delete();  
-        return redirect()->route('publicaciones.index');
+        return redirect()->back();
     }
 }

@@ -24,12 +24,12 @@ class RedirectIfAuthenticated
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
                 if(auth()->user()->role == 'admin'){
-                    return redirect()->to('/admin');
+                    return redirect()->to('/inicio');
                 }else if(auth()->user()->role == 'alumno'){
-                    return redirect()->to('/alumno');
+                    return redirect()->to('/alumno/inicio');
                 }
                 else if(auth()->user()->role == 'profesor'){
-                    return redirect()->to('/profesor');
+                    return redirect()->to('/profesor/inio');
                 }
             }
         }
