@@ -56,7 +56,7 @@ class AlumnoController extends Controller
             'id_aula' => 'required',
             'id_grado' => 'required',
             'id_genero' => 'required',
-            'password' => 'required|alpha|max:4'
+            'password' => 'required|alpha|min:4|max:4'
         ]);
 
         if(User::where("dni",$request->get('dni'))->first()){

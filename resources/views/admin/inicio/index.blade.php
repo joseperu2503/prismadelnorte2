@@ -7,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 @endsection
 @section('content')
-
     <h1 class="titulo">Inicio</h1>
     <a href="{{route('publicaciones.create')}}" class="btn btn-success mb-4">Nueva publicación</a>
     <div class="container">
@@ -15,8 +14,10 @@
             @include('admin.posts')          
         </div>      
     </div>
-    <div class="ajax-load text-center" style="display: none">
-        <p><img src="{{asset('storage/images/loader.gif')}}" alt=""></p>
+    <div class="d-flex justify-content-center ajax-load" style="display: none">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
     </div>
     
 @endsection
@@ -30,15 +31,15 @@
                 url:'?page=' + page,
                 type: 'get',
                 beforeSend: function(){
-                    $(".ajax-load").show();
+                    $('.ajax-load').show();
                 }
             })
             .done(function(data){
-                if(data.html == " "){
-                    $('.ajax-load').html("No more reords found");
+                if(data.html == ""){
+                    $(".ajax-load").html("No hay mas resultados");
                     return;
                 }
-                $('.ajax-load').hide();
+                $(".ajax-load").hide();
                 $('#post-data').append(data.html);
             })
             .fail(function(jqXHR, ajaxOptions, thrownError){

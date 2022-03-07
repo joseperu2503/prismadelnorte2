@@ -47,8 +47,9 @@ class AsistenciaController extends Controller
         
         $asistencias = Asistencia::select('asistencias.*',
         'alumnos.apellido_paterno','alumnos.apellido_materno',
-        'alumnos.primer_nombre','alumnos.segundo_nombre','aulas.aula')
-        ->join('alumnos', 'alumnos.dni', '=', 'asistencias.dni')
+        'alumnos.primer_nombre','alumnos.segundo_nombre','aulas.aula','users.dni')
+        ->leftjoin('users', 'users.id', '=', 'asistencias.id_user')
+        ->join('alumnos', 'alumnos.dni', '=', 'users.dni')
         ->leftjoin('aulas', 'aulas.id', '=', 'alumnos.id_aula')
         ->orderBy('created_at', 'desc')
         ->get();
@@ -61,8 +62,9 @@ class AsistenciaController extends Controller
         
         $asistencias = Asistencia::select('asistencias.*',
         'profesors.apellido_paterno','profesors.apellido_materno',
-        'profesors.primer_nombre','profesors.segundo_nombre')
-        ->join('profesors', 'profesors.dni', '=', 'asistencias.dni')
+        'profesors.primer_nombre','profesors.segundo_nombre','users.dni')
+        ->leftjoin('users', 'users.id', '=', 'asistencias.id_user')
+        ->join('profesors', 'profesors.dni', '=', 'users.dni')
         ->orderBy('created_at', 'desc')
         ->get();
 
@@ -74,8 +76,9 @@ class AsistenciaController extends Controller
         
         $asistencias = Asistencia::select('asistencias.*',
         'trabajadors.apellido_paterno','trabajadors.apellido_materno',
-        'trabajadors.primer_nombre','trabajadors.segundo_nombre')
-        ->join('trabajadors', 'trabajadors.dni', '=', 'asistencias.dni')
+        'trabajadors.primer_nombre','trabajadors.segundo_nombre','users.dni')
+        ->leftjoin('users', 'users.id', '=', 'asistencias.id_user')
+        ->join('trabajadors', 'trabajadors.dni', '=', 'users.dni')
         ->orderBy('created_at', 'desc')
         ->get();
 
@@ -93,19 +96,19 @@ class AsistenciaController extends Controller
         $fecha = date("d-m-Y"); 
 
        
-        $asistencias = Asistencia::select('asistencias.*','users.role')
-        ->leftjoin('users', 'users.dni', '=', 'asistencias.dni')
+        $asistencias = Asistencia::with('user')   
         ->whereDate('asistencias.created_at', date("Y-m-d"))
         ->orderBy('created_at', 'desc')
+        ->take(5)
         ->get();
 
         foreach($asistencias as $asistencia){
-            if($asistencia->role == 'alumno'){
-                $user_role = Alumno::select('*')->where('dni', $asistencia->dni)->first();                
-            }else if($asistencia->role == 'profesor'){
-                $user_role = Profesor::select('*')->where('dni', $asistencia->dni)->first();
-            }else if($asistencia->role == 'trabajador'){
-                $user_role = Trabajador::select('*')->where('dni', $asistencia->dni)->first();
+            if($asistencia->user->role == 'alumno'){
+                $user_role = Alumno::select('*')->where('dni', $asistencia->user->dni)->first();                
+            }else if($asistencia->user->role == 'profesor'){
+                $user_role = Profesor::select('*')->where('dni', $asistencia->user->dni)->first();
+            }else if($asistencia->user->role == 'trabajador'){
+                $user_role = Trabajador::select('*')->where('dni', $asistencia->user->dni)->first();
             }
             $asistencia['apellido_paterno'] = $user_role->apellido_paterno;
             $asistencia['apellido_materno'] = $user_role->apellido_materno;
@@ -129,41 +132,49 @@ class AsistenciaController extends Controller
         $fecha = date("Y-m-d");
 
         $user = User::select('*')->where('dni', $request->get('text'))->first();
-
-        if($user->role == 'alumno'){
-            $user_role = Alumno::select('*')->where('dni', $user->dni)->first();
-        }else if($user->role == 'profesor'){
-            $user_role = Profesor::select('*')->where('dni', $user->dni)->first();
-        }else if($user->role == 'trabajador'){
-            $user_role = Trabajador::select('*')->where('dni', $user->dni)->first();
-        }
-
-        $registro = Asistencia::select('*')
-            ->whereDate('created_at', $fecha)
-            ->where('dni', $user_role->dni)
-            ->count();
-        
-        if($registro == 0){
-            $hora_puntual = strtotime( "08:00:00" );
+        if( $user){
+            if($user->role == 'alumno'){
+                $user_role = Alumno::select('*')->where('dni', $user->dni)->first();
+            }else if($user->role == 'profesor'){
+                $user_role = Profesor::select('*')->where('dni', $user->dni)->first();
+            }else if($user->role == 'trabajador'){
+                $user_role = Trabajador::select('*')->where('dni', $user->dni)->first();
+            }
+    
+            $registro = Asistencia::select('*')
+                ->whereDate('created_at', $fecha)
+                ->where('id_user', $user->id)
+                ->count();
             
-            $asistencia = new Asistencia();
-            $asistencia->dni = $request->get('text');
-            $asistencia->tipo = 'entrada';
-            if($hora<$hora_puntual){
-                $asistencia->estado = 'puntual';
+            if($registro == 0){
+                $hora_puntual = strtotime( "08:00:00" );
+                
+                $asistencia = new Asistencia();
+                $asistencia->id_user = $user->id;
+                $asistencia->tipo = 'entrada';
+                if($hora<$hora_puntual){
+                    $asistencia->estado = 'puntual';
+                }
+                else{
+                    $asistencia->estado = 'tardanza';
+                }
+                $asistencia->save();
+                return redirect()
+                    ->route('asistencia.create')               
+                    ->with('success', 'Asistencia de <b>'.$user_role->primer_nombre.' '.$user_role->apellido_paterno.'</b> registrada exitosamente!');
+            }else{
+                return redirect()
+                    ->route('asistencia.create')
+                    ->with('error', 'La asistencia de <b>'.$user_role->primer_nombre.' '.$user_role->apellido_paterno.'</b> ya fué registrada!');
             }
-            else{
-                $asistencia->estado = 'tardanza';
-            }
-            $asistencia->save();
-            return redirect()
-                ->route('asistencia.create')               
-                ->with('success', 'Asistencia de '.$user_role->primer_nombre.' '.$user_role->apellido_paterno.' registrada exitosamente!');
+
         }else{
             return redirect()
-                ->route('asistencia.create')
-                ->with('error', 'La asistencia de '.$user_role->primer_nombre.' '.$user_role->apellido_paterno.' ya fué registrada!');
+                    ->route('asistencia.create')
+                    ->with('error', 'El QR escaneado no está registrado en el sistema!!');
         }
+
+       
         
 
     }

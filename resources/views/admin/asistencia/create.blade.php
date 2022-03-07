@@ -13,12 +13,12 @@
 <button id="btn-abrir-popup-nuevo" class="btn btn-success">Cambiar de camara</button>
 @if (session('success'))
     <div class="alert alert-success mt-3" role="alert">
-        {{ session('success') }}
+        {!! session('success') !!}
     </div>
 @endif
 @if (session('error'))
     <div class="alert alert-danger mt-3" role="alert">
-        {{ session('error') }}
+        {!! session('error') !!}
     </div>
 @endif
 
@@ -27,7 +27,7 @@
     <form action="/agregando_asistencia" method="POST" class="form">
         @csrf
         @method('PUT')
-        <label>ID del alumno</label>
+        <label>DNI del alumno</label>
         <input type="text" name="text" id="text" readonny="" placeholder="Código escaneado" class="form-control">
     </form>               
 </div>
@@ -46,7 +46,7 @@
             @foreach ($asistencias as $asistencia)
                 <tr>
                     <td class="align-middle">{{$asistencia->apellido_paterno}} {{$asistencia->apellido_materno}} {{$asistencia->primer_nombre}} {{$asistencia->segundo_nombre}}</td>
-                    <td class="align-middle">{{$asistencia->role}}</td>
+                    <td class="align-middle">{{$asistencia->user->role}}</td>
                     <td class="align-middle">{{$asistencia->created_at->format('H:i:s')}}</td>
                     <td class="align-middle">{{$asistencia->estado}}</td>
                 </tr>

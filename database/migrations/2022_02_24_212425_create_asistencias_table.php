@@ -15,10 +15,12 @@ class CreateAsistenciasTable extends Migration
     {
         Schema::create('asistencias', function (Blueprint $table) {
             $table->id();
-            $table->integer('dni');
+            $table->unsignedBigInteger('id_user');
             $table->string('estado',20);
             $table->string('tipo',20);
             $table->timestamps();
+
+            $table->foreign('id_user')->references('id')->on('users');
         });
     }
 

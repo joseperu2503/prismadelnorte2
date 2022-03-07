@@ -84,7 +84,11 @@
             @include('admin.posts')       
         </div>  
     </div>
-
+    <div class="d-flex justify-content-center ajax-load" style="display: none">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 
 @endsection
 
@@ -100,8 +104,8 @@
                 }
             })
             .done(function(data){
-                if(data.html == " "){
-                    $('.ajax-load').html("No more reords found");
+                if(data.html == ""){
+                    $('.ajax-load').html("No hay mas resultados");
                     return;
                 }
                 $('.ajax-load').hide();
