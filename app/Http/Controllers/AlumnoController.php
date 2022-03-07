@@ -265,10 +265,9 @@ class AlumnoController extends Controller
 
     public function asistencia()
     {   
-        $dni = auth()->user()->dni;
-        $alumno = DB::table('alumnos')->where('dni', $dni)->first();
+        $alumno = DB::table('alumnos')->where('dni',auth()->user()->dni)->first();
         $asistencias = Asistencia::select('*')                  
-            ->where('dni',  $dni)
+            ->where('id_user',auth()->user()->id)
             ->orderBy('created_at', 'desc')
             ->get();
         return view('alumno.asistencia')->with('asistencias',$asistencias)->with('alumno',$alumno);

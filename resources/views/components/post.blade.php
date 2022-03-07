@@ -1,22 +1,37 @@
-<div class="card col-12 offset-0 mb-4 col-md-8 offset-md-2 mb-4 shadow">   
+<div class="card col-12 offset-0 mb-4 col-md-8 offset-md-2 mb-4 shadow p-0">   
+    <div class="d-flex align-items-center gap-3 card-header">
+        <div class="d-flex align-items-center gap-3" style="min-width: max-content">
+            <div>
+                <img src="{{$post->fotoautor}}" style="width:40px;height: 40px;object-fit: cover">
+            </div>
+            
+            <div>
+                <p class="fw-bold my-0">{{$post->autor}}</p>
+                <p class="card-text"><small class="text-muted">{{$post->fechacreacion}}</small></p>
+            </div>
+        </div>    
+        <div class="w-100">
 
-    @if ($post->id_user == auth()->user()->id)
-    <div class="dropdown mt-2">
-        <button class="dropdown-toggle puntos" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="fas fa-ellipsis-h"></i>
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a class="dropdown-item" href="{{route('publicaciones.edit',$post->id)}}">Editar</a></li>
-            <li>
-                <form action="{{route('publicaciones.destroy',$post->id)}}" method="POST" class="dropdown-item formEliminar">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" style="border: none; background:transparent">Eliminar</button>
-                </form>
-            </li>
-        </ul>
-    </div> 
-    @endif
+        </div>
+        @if ($post->id_user == auth()->user()->id)
+        <div class="dropdown">
+            <button class="dropdown-toggle puntos" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item" href="{{route('publicaciones.edit',$post->id)}}">Editar</a></li>
+                <li>
+                    <form action="{{route('publicaciones.destroy',$post->id)}}" method="POST" class="dropdown-item formEliminar">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" style="border: none; background:transparent">Eliminar</button>
+                    </form>
+                </li>
+            </ul>
+        </div> 
+        @endif
+    </div>
+    
 
     @if (isset($post->imagen))
         <div class="d-flex justify-content-center mt-3">
@@ -43,18 +58,55 @@
                 </a>
             </div>
             
-        @endif  
-            
-            
-        <div class="d-flex justify-item-center gap-3 mt-2 pt-2 border-top">
-            <div>
-                <img src="/storage/fotos_perfil/{{$post->autorimagen}}" style="width:40px;height: 40px;object-fit: cover">
-            </div>
-            
-            <div>
-                <p class="fw-bold my-0">{{$post->autor}}</p>
-                <p class="card-text"><small class="text-muted">{{$post->fechacreacion}}</small></p>
-            </div>
-        </div>                       
+        @endif                     
+    </div>
+    @if ($post->comentarios->count() > '0')
+        <div class="card-footer bg-transparent border-top py-0">
+            @foreach ($post->comentarios as $comentario)
+                <x-comentario :comentario="$comentario"/>
+            @endforeach       
+        </div>
+         
+    @endif
+    
+    <div class="card-footer bg-transparent border-top">
+        
+            <form action="{{route('comentarios.store')}}" method="post" class="d-flex align-items-center gap-3">
+                @csrf
+                <div>
+                    <img src="{{auth()->user()->foto}}" style="width:2rem;height:2rem;object-fit:cover; border-radius:1rem">    
+                </div>
+                <div class="w-100">  
+                    <textarea class="form-control" name="descripcion" id="exampleFormControlTextarea1" rows="1" placeholder="Agregar comentario" required onchange="habilitar()"></textarea>
+                </div>
+                <input type="hidden" name="id_user" value="{{auth()->user()->id}}">
+                <input type="hidden" name="id_post" value="{{$post->id}}">
+                <button class="puntos" type="submit" id="enviar">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                                
+            </form>
+
     </div>
 </div>
+
+
+<script>
+    //script para la altura automatica del areatext
+    $("textarea").keyup(function(){  
+        var height = $(this).prop("scrollHeight")+2+"px";
+        $(this).css({"height":height});
+    })
+</script>
+{{-- <script>
+    function habilitar()
+    {
+    if (document.getElementById("exampleFormControlTextarea1").value == '') {
+        document.getElementById("enviar").disabled = true;
+        document.getElementById("enviar").classList.add("deshabilitado");
+    } else {
+        document.getElementById("enviar").disabled = false;
+        document.getElementById("enviar").classList.remove("deshabilitado");
+    }
+    }
+</script> --}}

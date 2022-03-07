@@ -5,29 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Post extends Model
+class Comentario extends Model
 {
     use HasFactory;
-    protected $table = 'posts';
+
+    protected $table = 'comentarios';
     protected $fillable = [
+        'id_post',
         'id_user',
-        'titulo',
-        'imagen',
-        'iframe',
-        'descripcion',
-        'id_curso'
+        'descripcion'
     ];
+
+
+    public function post(){
+        return $this->belongsTo(Post::class,'id_post');
+    }
 
     public function user(){
         return $this->belongsTo(User::class,'id_user');
-    }
-    public function curso(){
-        return $this->belongsTo(Curso::class,'id_curso');
-    }
-
-    public function comentarios()
-    {
-        return $this->hasMany(Comentario::class,'id_post')->orderby('created_at','asc');
     }
 
     public function getAutorAttribute()
@@ -39,32 +34,48 @@ class Post extends Model
             return $profesor->primer_nombre." ".$profesor->apellido_paterno;
 
         }
+        if($this->user->role=='alumno'){
+            $alumno=Alumno::select('*')
+                ->where('dni',$this->user->dni)
+                ->first();
+            return $alumno->primer_nombre." ".$alumno->apellido_paterno;
+
+        }
         else if($this->user->role=='admin'){
             return 'Administración';
 
         }
     }
 
-    public function getFotoAutorAttribute()
+    public function getAutorFotoAttribute()
     {
         if($this->user->role=='profesor'){
             $profesor=Profesor::select('*')
                 ->where('dni',$this->user->dni)
                 ->first();
 
-                return $profesor->foto_perfil;
+            return $profesor->foto_perfil;
+        }
+        else if($this->user->role=='alumno'){
+
+            $alumno=Alumno::select('*')
+                ->where('dni',$this->user->dni)
+                ->first();
+
+            return $alumno->foto_perfil;
         }
         else if($this->user->role=='admin'){
 
             return '/storage/fotos_perfil/logo.png';
         }
+        
     }
 
     public function getFechaCreacionAttribute()
     {
         $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-        // return $this->created_at->format('d')." de ".$meses[(int)$this->created_at->format('m')-1]." a las ".$this->created_at->format('H:i');
         return $this->created_at->diffForHumans();
     }
+
 
 }

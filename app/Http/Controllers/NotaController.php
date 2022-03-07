@@ -11,7 +11,7 @@ use App\Models\Nota;
 use App\Models\Profesor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+date_default_timezone_set("America/Lima");
 class NotaController extends Controller
 {
 

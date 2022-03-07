@@ -16,14 +16,21 @@
 @endif
 <div class="container">
     <div class="row" id="post-data">
-        @include('alumno.posts')        
+        @if ($posts->count() == 0)
+            Aun no hay publicaciones.
+        @else
+            @include('alumno.posts')        
+        @endif
+        
     </div>  
 </div>
-<div class="d-flex justify-content-center ajax-load" style="display: none">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-</div>
+@if ($posts->count() != 0)
+    <div class="d-flex justify-content-center ajax-load" style="display: none">
+        <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>    
+@endif
 @endsection
 @section('js')
     <script>

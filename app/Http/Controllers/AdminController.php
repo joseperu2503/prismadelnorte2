@@ -8,11 +8,11 @@ use App\Models\Post;
 use App\Models\Profesor;
 use App\Models\Trabajador;
 use Illuminate\Http\Request;
-
+date_default_timezone_set("America/Lima");
 class AdminController extends Controller
 {
     public function inicio(Request $request){
-        $posts = Post::select('*')
+        $posts = Post::with(['comentarios.user','curso','user'])
         ->orderby('created_at','desc')
         ->paginate(5);
         if($request->ajax()){

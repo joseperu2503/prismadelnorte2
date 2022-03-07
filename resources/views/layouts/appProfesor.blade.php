@@ -5,7 +5,7 @@
     <div class="home-content">
       <i class='bx bx-menu close'></i>
       <div class="info-header close">
-        <img class="foto-perfil" src="/storage/fotos_perfil/{{ $profesor->foto_perfil }}" alt="foto de perfil">
+        <img class="foto-perfil" src="{{ $profesor->foto_perfil }}" alt="foto de perfil">
         <p class="my-2">{{ $profesor->primer_nombre }}</p>
       </div>
     </div>

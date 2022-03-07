@@ -971,14 +971,14 @@ a{
 }
 
 .puntos{
-    width: 30px;
-    height: 30px;
-    border-radius: 15px;
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
-    left: calc(100% - 40px);
+    /* position: relative;
+    left: calc(100% - 40px); */
     background-color: transparent;
     border: none;
     color: #65676b;
@@ -994,4 +994,16 @@ a{
     visibility: hidden;
     content: none;
 }
+
+.deshabilitado{
+    cursor: none;   
+}
+.deshabilitado{
+    background-color: transparent;   
+}
+
+.comentario:hover .dropdown-toggle {
+    display:inline-flex !important;
+ }
+
 /* -------------------------- */

@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Profesor;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-
+date_default_timezone_set("America/Lima");
 class ProfesorController extends Controller
 {
 
@@ -36,11 +36,11 @@ class ProfesorController extends Controller
 
         if($request->get('id_genero')=='1'){
             Profesor::create([
-                'foto_perfil' => 'man.png'
+                'foto_perfil' => '/storage/fotos_perfil/man.png'
             ]+$request->all());
         }else if($request->get('id_genero')=='2'){
             Profesor::create([
-                'foto_perfil' => 'man.png'
+                'foto_perfil' => '/storage/fotos_perfil/woman.png'
             ]+$request->all());
         }  
 
@@ -94,9 +94,9 @@ class ProfesorController extends Controller
         //si cambia de genero debe cambiar su foto de perfil
         if($request->get('id_genero')){
             if($request->get('id_genero')=='1'){
-                $profesor->foto_perfil = 'man.png';
+                $profesor->foto_perfil = '/storage/fotos_perfil/man.png';
             }else if($request->get('id_genero')=='2'){
-                $profesor->foto_perfil = 'woman.png';
+                $profesor->foto_perfil = '/storage/fotos_perfil/woman.png';
             } 
         }
         

@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\AulaController;
+use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\CursoController;
 use App\Http\Controllers\EstudianteController;
 use App\Http\Controllers\NotaController;
@@ -169,6 +170,10 @@ Route::get('/curso/{id}/crear_publicacion', [PostController::class,'create_profe
     ->middleware('auth.profesor') //admin y profesor
     ->name('post.curso.create');
 
+//Posts
+
+
+Route::resource('comentarios',ComentarioController::class);
 
 
 //----------------------------Alumno-------------------------

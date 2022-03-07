@@ -10,7 +10,7 @@ use App\Models\Nota;
 use App\Models\Post;
 use App\Models\Profesor;
 use Illuminate\Support\Facades\DB;
-
+date_default_timezone_set("America/Lima");
 class CursoController extends Controller
 {
    

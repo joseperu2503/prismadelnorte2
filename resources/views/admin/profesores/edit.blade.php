@@ -7,7 +7,7 @@
 @section('content')
     <h1 class="titulo">Editar profesor</h1>
     <div class="form-container">  
-        <form action="/profesor/{{$profesor->id}}" method="POST">
+        <form action="{{route('profesores.update',$profesor->id)}}" method="POST">
             @csrf
             @method('PUT')
             <label class="form-label">DNI</label>

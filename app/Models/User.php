@@ -45,4 +45,42 @@ class User extends Authenticatable
     public function setPasswordAttribute($password){
         $this->attributes['password'] = bcrypt($password);
     }
+
+    public function getNombreAttribute()
+    {
+        if($this->role=='profesor'){
+            $profesor=Profesor::select('*')
+                ->where('dni',$this->dni)
+                ->first();
+            return $profesor->primer_nombre." ".$profesor->apellido_paterno;
+
+        }
+        else if($this->role=='admin'){
+            return 'Administración';
+
+        }
+    }
+
+    public function getFotoAttribute()
+    {
+        if($this->role=='profesor'){
+            $profesor=Profesor::select('*')
+                ->where('dni',$this->dni)
+                ->first();
+
+                return $profesor->foto_perfil;
+        }
+        else if($this->role=='alumno'){
+
+            $alumno=Alumno::select('*')
+                ->where('dni',$this->dni)
+                ->first();
+
+            return $alumno->foto_perfil;
+        }
+        else if($this->role=='admin'){
+
+            return '/storage/fotos_perfil/logo.png';
+        }
+    }
 }

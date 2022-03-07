@@ -11,7 +11,7 @@
 @section('content')
 
     <h1 class="titulo">{{$curso->nombre." - ".$aula->aula}}</h1>
-    <a href="{{route('nota.create',$curso->id)}}" class="btn btn-success">Agregar Notas</a>
+    <a href="{{route('nota.create',$curso->id)}}" class="btn btn-success mb-4">Agregar Notas</a>
     
     @foreach ($bimestres as $bimestre)
        
@@ -78,7 +78,7 @@
     @endforeach
     
     <h1 class="titulo">Publicaciones del curso</h1>
-    <a href="{{route('post.curso.create',$curso->id)}}" class="btn btn-success">Crear publicación</a>
+    <a href="{{route('post.curso.create',$curso->id)}}" class="btn btn-success mb-4">Crear publicación</a>
     <div class="container">
         <div class="row" id="post-data">
             @include('admin.posts')       

@@ -52,5 +52,12 @@ class Alumno extends Model
         return $this->belongsTo(Aula::class,'id_aula');
     }
 
+    public function getUserAttribute()
+    {
+            $user=User::select('*')
+                ->where('dni',$this->dni)
+                ->first();
+            return $user;
 
+    }
 }

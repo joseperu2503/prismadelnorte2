@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Aula;
 use App\Models\Nivel;
-
+date_default_timezone_set("America/Lima");
 class AulaController extends Controller
 {
    
