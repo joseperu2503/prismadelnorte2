@@ -9,12 +9,16 @@
 
 <div class="form-container">  
     @if($errors->any())
-            <div class="alert alert-danger" role="alert">
-                @foreach ($errors->all() as $error)
-                    - {{ $error }} <br />
-                @endforeach
-            </div>
-        @endif
+        <div class="alert alert-danger" role="alert">
+            @foreach ($errors->all() as $error)
+                - {{ $error }} <br />
+            @endforeach
+        </div>
+    @endif
+    <div class="alert alert-warning">
+        -Respetar mayúsculas y minúsculas <br>
+        -La contraseña debe ser 4 letras, las dos primeras letras del apellido paterno seguidas de las dos primeras letras del apellido materno
+    </div>
     <form action="{{route('alumnos.update',$alumno->id)}}" method="POST">
         @csrf
         @method('PUT')

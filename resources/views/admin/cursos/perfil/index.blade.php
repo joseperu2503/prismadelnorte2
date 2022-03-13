@@ -78,7 +78,15 @@
     @endforeach
     
     <h1 class="titulo">Publicaciones del curso</h1>
-    <a href="{{route('post.curso.create',$curso->id)}}" class="btn btn-success mb-4">Crear publicación</a>
+    <div class="btn-group mb-4">
+        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          Nuevo
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="{{route('post.curso.create',$curso->id)}}">Publicacion</a></li>
+          <li><a class="dropdown-item" href="#">Tarea</a></li>         
+        </ul>
+    </div>
     <div class="container">
         <div class="row" id="post-data">
             @include('admin.posts')       

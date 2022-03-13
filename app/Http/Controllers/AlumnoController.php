@@ -75,12 +75,22 @@ class AlumnoController extends Controller
             $user->password = $request->get('password');
             $user->role = 'alumno';
             $user->save();
-            
-            if($request->get('return_aula')){
-                return redirect()->route('admin.alumnos',$request->get('id_aula'));
-            }else{
-                return redirect()->route('alumnos.index');
+
+            if($request->get('id_genero')=='1'){
+                if($request->get('return_aula')){
+                    return redirect()->route('admin.alumnos',$request->get('id_aula'))->with('message', 'Alumno <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> registrado correctamente');
+                }else{
+                    return redirect()->route('alumnos.index')->with('message', 'Alumno <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> registrado correctamente');
+                }
+            }else if($request->get('id_genero')=='2'){
+                if($request->get('return_aula')){
+                    return redirect()->route('admin.alumnos',$request->get('id_aula'))->with('message', 'Alumna <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> registrada correctamente');
+                }else{
+                    return redirect()->route('alumnos.index')->with('message', 'Alumna <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> registrada correctamente');
+                }
             }
+            
+            
             
         }
         
@@ -128,7 +138,13 @@ class AlumnoController extends Controller
             $user->save();
         }
         $alumno->update($request->all());
-        return redirect()->route('admin.alumnos',$request->get('id_aula'));
+
+
+        if($request->get('id_genero')=='1'){
+            return redirect()->route('admin.alumnos',$request->get('id_aula'))->with('message', 'Alumno <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> actualizado correctamente');
+        }else if($request->get('id_genero')=='2'){
+            return redirect()->route('admin.alumnos',$request->get('id_aula'))->with('message', 'Alumna <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> actualizada correctamente');
+        }
     }
 
     public function destroy($id)

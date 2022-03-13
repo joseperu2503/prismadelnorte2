@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comentario;
+use App\Models\Post;
 use Illuminate\Http\Request;
 date_default_timezone_set("America/Lima");
 class ComentarioController extends Controller
@@ -38,7 +39,14 @@ class ComentarioController extends Controller
     
         $comentario = $request->all();       
         Comentario::create($comentario);
-        return redirect()->back();
+
+        $post = Post::select('*')->where('id', $request->get('id_post'))->first();    
+
+
+        $view = view('render.comentarios',compact('post'))->render();
+        return response()->json([      
+            'html'=>$view
+        ]);
     }
 
     /**

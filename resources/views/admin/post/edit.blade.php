@@ -37,14 +37,51 @@
                     @endforeach
                 </div>
             @endif
+
+            
+
             <div class="buttons-form">
                 <a href="{{url()->previous()}}" class="btn btn-danger">Cancelar</a>
                 <button type="submit" class="btn btn-success">Guardar</button>
             </div>          
         </form>
+        @if (isset($post->carpeta))
+            @include('render.archivos')
+        @endif  
+        
     </div>
 @endsection
 @section('js')
+    <script>
+        var renderArchivos = function(){  
+            let archivoGrid = document.getElementById('archivos-grid');
+            let archivos = archivoGrid.querySelectorAll('.archivo-container');
+            if(archivos.length > 0){
+                archivoGrid.style.display = 'grid';
+                archivoGrid.querySelectorAll('.archivo-container').forEach(archivo => {           
+                    let form = archivo.querySelector('#eliminar-archivo');
+                    var eliminarArchivo = function(){
+                        var data = new FormData(form)
+                        fetch('{{ route('post.archivo.delete') }}',{                        
+                            method:'POST',
+                            body: data
+                        }).then(response => response.json())
+                        .then(data => {
+                            console.log('ok')              
+                            archivoGrid.outerHTML=data.html;
+                            renderArchivos();
+                        });
+                    };
+
+                    archivo.querySelector('#eliminar').addEventListener('click', eliminarArchivo);
+
+                });                             
+            }
+        }
+        renderArchivos();
+
+
+    </script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
     <script>   
         $(document).ready(function (e) {   
@@ -57,8 +94,7 @@
             });
         });
     </script>
-
-    
+   
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
     {{-- Summer editor --}}

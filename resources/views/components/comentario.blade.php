@@ -1,4 +1,4 @@
-<div class="d-flex gap-3 my-3 w-100 comentario">
+<div class="mb-3 w-100 comentario comentario-disabled">
     <div style="margin-top: 6.5px">
         <img src="{{$comentario->autorfoto}}" style="width:2rem;height:2rem;object-fit:cover; border-radius:1rem">    
     </div>

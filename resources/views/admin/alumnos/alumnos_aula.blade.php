@@ -9,8 +9,12 @@
 
 @section('content')
     <h1 class="titulo">Alumnos de {{$aula->aula}} </h1>
+    @if (session('message'))
+        <div class="alert alert-success mt-3" role="alert">
+            {!! session('message') !!}
+        </div>
+    @endif
     <a href="{{route('alumno.create',$aula->id)}}" class="btn btn-success mb-4">Nuevo</a>
-
 
     <div class="table-responsive">
         <table id="table_id" class = "table table-hover">

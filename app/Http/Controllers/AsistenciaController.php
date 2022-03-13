@@ -20,24 +20,23 @@ class AsistenciaController extends Controller
      */
     public function index()
     {
-        $asistencias = Asistencia::select('asistencias.*','users.role')
-        ->leftjoin('users', 'users.dni', '=', 'asistencias.dni')
+        $asistencias = Asistencia::with(['user','user.userrole'])
         ->orderBy('created_at', 'desc')
         ->get();
 
-        foreach($asistencias as $asistencia){
-            if($asistencia->role == 'alumno'){
-                $user_role = Alumno::select('*')->where('dni', $asistencia->dni)->first();                
-            }else if($asistencia->role == 'profesor'){
-                $user_role = Profesor::select('*')->where('dni', $asistencia->dni)->first();
-            }else if($asistencia->role == 'trabajador'){
-                $user_role = Trabajador::select('*')->where('dni', $asistencia->dni)->first();
-            }
-            $asistencia['apellido_paterno'] = $user_role->apellido_paterno;
-            $asistencia['apellido_materno'] = $user_role->apellido_materno;
-            $asistencia['primer_nombre'] = $user_role->primer_nombre;
-            $asistencia['segundo_nombre'] = $user_role->segundo_nombre;
-        }
+        // foreach($asistencias as $asistencia){
+        //     if($asistencia->role == 'alumno'){
+        //         $user_role = Alumno::select('*')->where('dni', $asistencia->dni)->first();                
+        //     }else if($asistencia->role == 'profesor'){
+        //         $user_role = Profesor::select('*')->where('dni', $asistencia->dni)->first();
+        //     }else if($asistencia->role == 'trabajador'){
+        //         $user_role = Trabajador::select('*')->where('dni', $asistencia->dni)->first();
+        //     }
+        //     $asistencia['apellido_paterno'] = $user_role->apellido_paterno;
+        //     $asistencia['apellido_materno'] = $user_role->apellido_materno;
+        //     $asistencia['primer_nombre'] = $user_role->primer_nombre;
+        //     $asistencia['segundo_nombre'] = $user_role->segundo_nombre;
+        // }
 
         return view('admin.asistencia.index')->with('asistencias',$asistencias);
     }
@@ -96,7 +95,7 @@ class AsistenciaController extends Controller
         $fecha = date("d-m-Y"); 
 
        
-        $asistencias = Asistencia::with('user')   
+        $asistencias = Asistencia::with(['user'])
         ->whereDate('asistencias.created_at', date("Y-m-d"))
         ->orderBy('created_at', 'desc')
         ->take(5)
@@ -127,56 +126,81 @@ class AsistenciaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request){
-        
-        $hora = strtotime(date("H:i:s"));
-        $fecha = date("Y-m-d");
 
-        $user = User::select('*')->where('dni', $request->get('text'))->first();
-        if( $user){
-            if($user->role == 'alumno'){
-                $user_role = Alumno::select('*')->where('dni', $user->dni)->first();
-            }else if($user->role == 'profesor'){
-                $user_role = Profesor::select('*')->where('dni', $user->dni)->first();
-            }else if($user->role == 'trabajador'){
-                $user_role = Trabajador::select('*')->where('dni', $user->dni)->first();
-            }
-    
-            $registro = Asistencia::select('*')
-                ->whereDate('created_at', $fecha)
-                ->where('id_user', $user->id)
-                ->count();
-            
-            if($registro == 0){
-                $hora_puntual = strtotime( "08:00:00" );
+        
+        
+            $hora = strtotime(date("H:i:s"));
+            $fecha = date("Y-m-d");
+
+            $user = User::select('*')->where('dni', $request->get('text'))->first();
+            if( $user){
+                if($user->role == 'alumno'){
+                    $user_role = Alumno::select('*')->where('dni', $user->dni)->first();
+                }else if($user->role == 'profesor'){
+                    $user_role = Profesor::select('*')->where('dni', $user->dni)->first();
+                }else if($user->role == 'trabajador'){
+                    $user_role = Trabajador::select('*')->where('dni', $user->dni)->first();
+                }
+        
+                $registro = Asistencia::select('*')
+                    ->whereDate('created_at', $fecha)
+                    ->where('id_user', $user->id)
+                    ->count();
                 
-                $asistencia = new Asistencia();
-                $asistencia->id_user = $user->id;
-                $asistencia->tipo = 'entrada';
-                if($hora<$hora_puntual){
-                    $asistencia->estado = 'puntual';
+                if($registro == 0){
+                    $hora_puntual = strtotime( "08:00:00" );
+                    
+                    $asistencia = new Asistencia();
+                    $asistencia->id_user = $user->id;
+                    $asistencia->tipo = 'entrada';
+                    if($hora<$hora_puntual){
+                        $asistencia->estado = 'puntual';
+                    }
+                    else{
+                        $asistencia->estado = 'tardanza';
+                    }
+                    $asistencia->save();
+
+                    $asistencias = Asistencia::with('user')   
+                        ->whereDate('asistencias.created_at', date("Y-m-d"))
+                        ->orderBy('created_at', 'desc')
+                        ->take(5)
+                        ->get();
+
+                    foreach($asistencias as $asistencia){
+                        if($asistencia->user->role == 'alumno'){
+                            $user_role2 = Alumno::select('*')->where('dni', $asistencia->user->dni)->first();                
+                        }else if($asistencia->user->role == 'profesor'){
+                            $user_role2 = Profesor::select('*')->where('dni', $asistencia->user->dni)->first();
+                        }else if($asistencia->user->role == 'trabajador'){
+                            $user_role2 = Trabajador::select('*')->where('dni', $asistencia->user->dni)->first();
+                        }
+                        $asistencia['apellido_paterno'] = $user_role2->apellido_paterno;
+                        $asistencia['apellido_materno'] = $user_role2->apellido_materno;
+                        $asistencia['primer_nombre'] = $user_role2->primer_nombre;
+                        $asistencia['segundo_nombre'] = $user_role2->segundo_nombre;
+                    }
+                    $view = view('admin.asistencia.ultimos_registros',compact('asistencias'))->render();
+                    return response()->json([
+                        'mensaje' =>  'Asistencia de <b>'.$user->user_role->primer_nombre.' '.$user->user_role->apellido_paterno.'</b> registrada exitosamente!',
+                        'tipo' =>'success',
+                        'html'=>$view,
+                    ]);
+                        
+                }else{
+                    return response()->json([
+                        'mensaje' =>  'La asistencia de <b>'.$user->user_role->primer_nombre.' '.$user->user_role->apellido_paterno.'</b> ya fué registrada!',
+                        'tipo' =>'error'
+                    ]);                
                 }
-                else{
-                    $asistencia->estado = 'tardanza';
-                }
-                $asistencia->save();
-                return redirect()
-                    ->route('asistencia.create')               
-                    ->with('success', 'Asistencia de <b>'.$user_role->primer_nombre.' '.$user_role->apellido_paterno.'</b> registrada exitosamente!');
+
             }else{
-                return redirect()
-                    ->route('asistencia.create')
-                    ->with('error', 'La asistencia de <b>'.$user_role->primer_nombre.' '.$user_role->apellido_paterno.'</b> ya fué registrada!');
+                return response()->json([
+                    'mensaje' =>  'El QR escaneado no está registrado en el sistema!!',
+                    'tipo' =>'error'
+                ]);                
             }
-
-        }else{
-            return redirect()
-                    ->route('asistencia.create')
-                    ->with('error', 'El QR escaneado no está registrado en el sistema!!');
-        }
-
-       
         
-
     }
 
     /**

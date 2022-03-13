@@ -152,7 +152,7 @@ Route::get('/nueva_asistencia', [AsistenciaController::class,'create'])
     ->middleware('auth.admin') 
     ->name('asistencia.create');
 
-Route::put('/agregando_asistencia', [AsistenciaController::class,'store'])
+Route::post('/agregando_asistencia', [AsistenciaController::class,'store'])
     ->middleware('auth.admin') 
     ->name('asistencia.store');
 
@@ -165,12 +165,14 @@ Route::get('/posts',[PostController::class, 'index']);
 Route::resource('publicaciones',PostController::class)
     ->middleware('auth.profesor');
 
+Route::post('/archivo/archivo_delete',[PostController::class, 'eliminar_archivo'])
+    ->name('post.archivo.delete');
 
 Route::get('/curso/{id}/crear_publicacion', [PostController::class,'create_profesor'])
     ->middleware('auth.profesor') //admin y profesor
     ->name('post.curso.create');
 
-//Posts
+//Comentarios
 
 
 Route::resource('comentarios',ComentarioController::class);

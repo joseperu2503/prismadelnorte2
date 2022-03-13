@@ -16,6 +16,10 @@
                 @endforeach
             </div>
         @endif
+        <div class="alert alert-warning">
+            -Respetar mayúsculas y minúsculas <br>
+            -La contraseña debe ser 4 letras, las dos primeras letras del apellido paterno seguidas de las dos primeras letras del apellido materno
+        </div>
         <form action="{{route('alumnos.store')}}" method="POST">
             @csrf    
             <h3 class="text-center text-body">Datos del alumno</h3>

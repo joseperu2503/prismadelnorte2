@@ -18,9 +18,11 @@ class CreatePostsTable extends Migration
             $table->unsignedBigInteger('id_user');
             $table->string('titulo',100)->nullable();
             $table->string('imagen',100)->nullable();
-            $table->text('iframe',100)->nullable();
-            $table->text('descripcion',1000)->nullable();
-            $table->unsignedBigInteger('id_curso')->nullable();           
+            $table->text('iframe')->nullable();
+            $table->text('descripcion')->nullable();
+            $table->text('carpeta')->nullable();
+            $table->unsignedBigInteger('id_curso')->nullable();     
+            $table->integer('tarea');      
             $table->timestamps();
 
             $table->foreign('id_user')->references('id')->on('users');

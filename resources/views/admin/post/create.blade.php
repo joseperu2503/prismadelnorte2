@@ -7,7 +7,8 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">   
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
-    
+
+   
 @endsection
 @section('content')
     <h1 class="titulo">Nueva Publicación</h1>
@@ -24,7 +25,7 @@
             <label class="form-label">Título</label>
             <input id="titulo" name="titulo" type="text" class="form-control mb-3" value="{{old('titulo')}}">           
             
-            <label class="form-label">Imagen</label>
+            <label class="form-label">Imagen de portada</label>
             <label class="btn btn-outline-primary w-100 mb-3">
                 <i class="fas fa-image"></i>
                 <p class="m-0">Seleccione la imagen</p>
@@ -38,10 +39,13 @@
             <textarea id="summernote" name="descripcion" type="text" class="form-control mb-3" rows="5" >{{old('descripcion')}}</textarea>
             <label class="form-label mt-3">Contenido embebido</label>
             <input id="iframe" name="iframe" type="text" class="form-control mb-3" value="{{old('iframe')}}">           
-            
+            <label class="form-label">Archivos</label>
+            <input type="file" class="form-control mb-3" name="archivos[]" multiple id="formFileMultiple">
+
+
             @if (isset($curso->id))
                 <input type="hidden" name="id_curso" value="{{$curso->id}}">
-            @endif
+            @endif           
             <div class="buttons-form">
                 <a href="{{url()->previous()}}" class="btn btn-danger">Cancelar</a>
                 <button type="submit" class="btn btn-success">Publicar</button>
@@ -83,5 +87,6 @@
             ]
         });
     </script>
-    
+
+       
 @endsection

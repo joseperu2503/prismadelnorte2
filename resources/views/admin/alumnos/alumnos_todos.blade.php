@@ -9,9 +9,12 @@
 
 @section('content')
     <h1 class="titulo">Alumnos</h1>
+    @if (session('message'))
+        <div class="alert alert-success mt-3" role="alert">
+            {!! session('message') !!}
+        </div>
+    @endif
     <a href="{{route('alumno.createTodos')}}" class="btn btn-success mb-4">Nuevo</a>
-
-
     <div class="table-responsive">
         <table id="table_id" class = "table table-hover">
             <thead>

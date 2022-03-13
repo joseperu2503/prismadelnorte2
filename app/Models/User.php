@@ -83,4 +83,16 @@ class User extends Authenticatable
             return '/storage/fotos_perfil/logo.png';
         }
     }
+
+    public function getUserRoleAttribute()
+    {
+        if($this->role == 'alumno'){
+            $user_role = Alumno::select('*')->where('dni', $this->dni)->first();
+        }else if($this->role == 'profesor'){
+            $user_role = Profesor::select('*')->where('dni', $this->dni)->first();
+        }else if($this->role == 'trabajador'){
+            $user_role = Trabajador::select('*')->where('dni', $this->dni)->first();
+        }
+        return $user_role;
+    }
 }

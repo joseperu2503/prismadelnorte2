@@ -369,7 +369,7 @@ class DatabaseSeeder extends Seeder
 
         Profesor::factory(10)->create();
         Curso::factory(10)->create();
-        Post::factory(100)->create();
+        Post::factory(50)->create();
         // Alumno::factory(100)->create();
     }
 

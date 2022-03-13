@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Post extends Model
 {
@@ -15,7 +16,9 @@ class Post extends Model
         'imagen',
         'iframe',
         'descripcion',
-        'id_curso'
+        'id_curso',
+        'tarea',
+        'carpeta'
     ];
 
     public function user(){
@@ -61,10 +64,14 @@ class Post extends Model
     }
 
     public function getFechaCreacionAttribute()
-    {
-        $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-        // return $this->created_at->format('d')." de ".$meses[(int)$this->created_at->format('m')-1]." a las ".$this->created_at->format('H:i');
+    {   
         return $this->created_at->diffForHumans();
+    }
+
+    public function getArchivosAttribute()
+    {
+        $archivos = collect(Storage::disk("google")->listContents($this->carpeta, false))->where('type', '=', 'file');
+        return $archivos;
     }
 
 }

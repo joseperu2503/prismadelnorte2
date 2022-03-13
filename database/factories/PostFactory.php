@@ -17,7 +17,9 @@ class PostFactory extends Factory
             'id_user' => '1',
             'titulo' => $this->faker->sentence,
             'descripcion' => $this->faker->sentence(40),
-            'id_curso' => rand(1,10)        
+            'id_curso' => rand(1,10),
+            'tarea'=> rand(1,2),
+            'carpeta'=> null    
         ];
     }
 }
