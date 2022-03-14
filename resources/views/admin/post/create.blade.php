@@ -12,6 +12,7 @@
 @endsection
 @section('content')
     <h1 class="titulo">Nueva Publicación</h1>
+    {{$post->id}}
     <div class="form-container">
         @if($errors->any())
             <div class="alert alert-danger" role="alert">
@@ -20,7 +21,7 @@
                 @endforeach
             </div>
         @endif  
-        <form action="{{route('publicaciones.store')}}" method="POST" enctype="multipart/form-data">
+        <form action="{{route('publicaciones.store')}}" method="POST" enctype="multipart/form-data" id="form">
             @csrf
             <label class="form-label">Título</label>
             <input id="titulo" name="titulo" type="text" class="form-control mb-3" value="{{old('titulo')}}">           
@@ -39,25 +40,120 @@
             <textarea id="summernote" name="descripcion" type="text" class="form-control mb-3" rows="5" >{{old('descripcion')}}</textarea>
             <label class="form-label mt-3">Contenido embebido</label>
             <input id="iframe" name="iframe" type="text" class="form-control mb-3" value="{{old('iframe')}}">           
-            <label class="form-label">Archivos</label>
-            <input type="file" class="form-control mb-3" name="archivos[]" multiple id="formFileMultiple">
+            
 
+            <input type="hidden" name="id_post" value="{{$post->id}}">
 
             @if (isset($curso->id))
                 <input type="hidden" name="id_curso" value="{{$curso->id}}">
             @endif           
-            <div class="buttons-form">
-                <a href="{{url()->previous()}}" class="btn btn-danger">Cancelar</a>
-                <button type="submit" class="btn btn-success">Publicar</button>
-            </div>          
+                     
         </form>
+
+        <form method="post" id="archivos-form">
+            @csrf
+            <label class="form-label">Archivos</label>
+            <input type="file" class="form-control mb-3" name="archivos[]" multiple id="formFileMultiple">
+            <input type="hidden" name="id_post" value="{{$post->id}}">
+        </form>
+
+        @include('render.archivos')
+
+        <div id="spinner-cargando" style="display: none" class="my-4">
+            <div class="d-flex flex-column align-items-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando archivos...</span>
+                </div>
+                <div>
+                    Cargando archivos...
+                </div>
+            </div>
+        </div>
+        <div id="spinner-eliminando" style="display: none" class="my-4">
+            <div class="d-flex flex-column align-items-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando archivos...</span>
+                </div>
+                <div>
+                    Eliminando archivos...
+                </div>
+            </div>
+        </div>
+        
+
+        <div class="buttons-form mt-5">
+            <form method="post" id="cancelar-form">
+                @csrf
+                <input type="hidden" name="id_post" value="{{$post->id}}">
+                <button type="button" class="btn btn-danger" id="cancelar">Cancelar</button>
+            </form>
+            
+            <button type="submit" form="form" class="btn btn-success">Publicar</button>
+        </div> 
     </div>
 @endsection
-@section('js')
+@section('js')  
 
-    
+    <script>
+        let spinnerCargando = document.getElementById('spinner-cargando');   
+        let spinnerEliminando = document.getElementById('spinner-eliminando');      
+        let archivosForm = document.getElementById('archivos-form');
+        archivosForm.addEventListener('change', function(){
+            
+            spinnerCargando.style.display = 'block';
+            var data = new FormData(archivosForm);
+            fetch('{{ route('archivos.store') }}',{               
+                method:'POST',
+                body: data
+            }).then(response => response.json())
+            .then(data => { 
+                spinnerCargando.style.display = 'none';              
+                var archivosGrid = document.getElementById('archivos-grid');
+                archivosGrid.outerHTML=data.html;   
+                document.getElementById("archivos-form").reset();
+                var botonArchivo = function(){
+                    var archivosGrid = document.getElementById('archivos-grid');
+                    let archivos = archivosGrid.querySelectorAll('.archivo-container');
+                    if(archivos.length > 0){               
+                        archivosGrid.querySelectorAll('.archivo-container').forEach(archivo => {           
+                            let form = archivo.querySelector('#eliminar-archivo');
+                            var eliminarArchivo = function(){
+                                spinnerEliminando.style.display = 'block';
+                                var data = new FormData(form)
+                                fetch('{{route('archivo.delete')}}',{                        
+                                    method:'POST',
+                                    body: data
+                                }).then(response => response.json())
+                                .then(data => {
+                                    spinnerEliminando.style.display = 'none';             
+                                    archivosGrid.outerHTML=data.html;
+                                    botonArchivo();   
+                                });
+                            };
+
+                            archivo.querySelector('#eliminar').addEventListener('click', eliminarArchivo);
+
+                        });                             
+                    }
+                } 
+                botonArchivo();         
+            });            
+        });   
+        let cancelarBoton = document.getElementById('cancelar');     
+        var dataCancelar = new FormData(document.getElementById('cancelar-form'));  
+        cancelarBoton.addEventListener('click',function(){
+            fetch('{{route('post.delete')}}',{                        
+                method:'POST',
+                body: dataCancelar
+
+            }).then(window.history.back());
+
+        });
+
+
+    </script>
+
     {{-- Scripts para mostrar la imagen cuando se seleccione --}}
-    
     
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
     <script>   

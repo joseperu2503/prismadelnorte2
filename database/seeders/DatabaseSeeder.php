@@ -205,10 +205,18 @@ class DatabaseSeeder extends Seeder
         $aula->save();
 
         $aula = new Aula;
-        $aula->codigo = 'PRE';
-        $aula->aula = 'Pre';
+        $aula->codigo = 'PRE1';
+        $aula->aula = 'Pre 1';
         $aula->id_nivel = '3';
-        $aula->abreviatura = 'Pre';
+        $aula->abreviatura = 'Pre 1';
+
+        $aula->save();
+
+        $aula = new Aula;
+        $aula->codigo = 'PRE2';
+        $aula->aula = 'Pre 2';
+        $aula->id_nivel = '3';
+        $aula->abreviatura = 'Pre 2';
 
         $aula->save();
 
@@ -367,9 +375,9 @@ class DatabaseSeeder extends Seeder
         // $curso->id_aula = '7';
         // $curso->save();
 
-        Profesor::factory(10)->create();
-        Curso::factory(10)->create();
-        Post::factory(50)->create();
+        //Profesor::factory(10)->create();
+        //Curso::factory(10)->create();
+        //Post::factory(50)->create();
         // Alumno::factory(100)->create();
     }
 

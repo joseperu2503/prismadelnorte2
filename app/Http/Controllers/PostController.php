@@ -32,7 +32,13 @@ class PostController extends Controller
      */
     public function create()
     {   
-        return view('admin.post.create'); 
+        $post_crear = Post::create([
+            'id_user'=>auth()->user()->id,
+            'tarea'=>'1'
+        ]);
+        $post = Post::select('*')->where('id', $post_crear->id)->first();  
+
+        return view('admin.post.create')->with('post',$post); 
     }
 
     public function create_profesor($id)
@@ -50,10 +56,9 @@ class PostController extends Controller
             'imagen' => 'image|mimes:jpeg,png,jpg'
         ]);
 
-        $post=Post::create([
-            'id_user' => auth()->user()->id,
-            'tarea' => '1'
-        ]+$request->all());
+        $datos = $request->all();
+        $post = Post::find($request->get('id_post'));
+        
 
         if($request->file('imagen')) {  
             $nombre_img = date('YmdHis'). "." . $request->file('imagen')->getClientOriginalExtension();
@@ -62,7 +67,7 @@ class PostController extends Controller
             
         }
 
-        
+        $post->update($datos);
 
         //Drive
         if($request->get('id_curso') && $request->hasFile('archivos')){
@@ -127,7 +132,6 @@ class PostController extends Controller
 
         }
        
-        $post->save();
         if(auth()->user()->role=='admin'){
             if($request->id_curso){
                 return redirect()->route('curso.perfil',$request->id_curso);   
@@ -195,14 +199,16 @@ class PostController extends Controller
         return redirect()->back();
     }
 
-    public function eliminar_archivo(Request $request)
+    public function eliminar_post(Request $request)
     {
-        
-        Storage::disk("google")->delete($request->get('path'));
-        $post = Post::select('*')->where('id', $request->get('id_post'))->first();   
-        $view = view('render.archivos',compact('post'))->render();
-        return response()->json([      
-            'html'=>$view
-        ]);
+        $post = Post::find($request->get('id_post'));
+        Storage::delete(str_replace("storage", "public", $post->imagen)); 
+
+        foreach($post->archivos as $archivo){
+            $archivo->delete();
+        }
+        Storage::disk("google")->deleteDirectory($post->carpeta);
+        $post->delete();
+
     }
 }

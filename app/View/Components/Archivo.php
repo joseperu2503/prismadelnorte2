@@ -8,17 +8,15 @@ class Archivo extends Component
 {
     public $archivo;
     public $tipo;
-    public $idPost;
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($archivo,$tipo,$idPost)
+    public function __construct($archivo,$tipo)
     {
         $this->archivo = $archivo;
         $this->tipo = $tipo;
-        $this->idPost = $idPost;
     }
 
     /**

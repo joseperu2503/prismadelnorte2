@@ -68,10 +68,9 @@ class Post extends Model
         return $this->created_at->diffForHumans();
     }
 
-    public function getArchivosAttribute()
+    public function archivos()
     {
-        $archivos = collect(Storage::disk("google")->listContents($this->carpeta, false))->where('type', '=', 'file');
-        return $archivos;
+        return $this->hasMany(Archivo::class,'id_post');
     }
 
 }

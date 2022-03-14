@@ -6,6 +6,7 @@ use App\Http\Controllers\SessionsController;
 use App\Http\Controllers\AdminController;
 //use App\Http\Controllers\AulaController;
 use App\Http\Controllers\AlumnoController;
+use App\Http\Controllers\ArchivoController;
 use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\AulaController;
 use App\Http\Controllers\ComentarioController;
@@ -165,8 +166,11 @@ Route::get('/posts',[PostController::class, 'index']);
 Route::resource('publicaciones',PostController::class)
     ->middleware('auth.profesor');
 
-Route::post('/archivo/archivo_delete',[PostController::class, 'eliminar_archivo'])
-    ->name('post.archivo.delete');
+Route::post('/post/post_delete',[PostController::class, 'eliminar_post'])   
+    ->middleware('auth.profesor')
+    ->name('post.delete');
+
+
 
 Route::get('/curso/{id}/crear_publicacion', [PostController::class,'create_profesor'])
     ->middleware('auth.profesor') //admin y profesor
@@ -174,9 +178,13 @@ Route::get('/curso/{id}/crear_publicacion', [PostController::class,'create_profe
 
 //Comentarios
 
-
 Route::resource('comentarios',ComentarioController::class);
 
+//Archivos
+Route::resource('archivos',ArchivoController::class);
+
+Route::post('/archivo/archivo_delete',[ArchivoController::class, 'eliminar_archivo'])
+    ->name('archivo.delete');
 
 //----------------------------Alumno-------------------------
 
@@ -213,3 +221,11 @@ Route::get('profesor/inicio', [ProfesorController::class,'inicio'])
 Route::get('profesor/cursos', [ProfesorController::class,'cursos_usuario'])
     ->middleware('auth.profesor')
     ->name('profesor.cursos');
+
+Route::get('prueba', function(){
+
+    $contents = (collect(Storage::disk("google")->listContents("/", false))->where('type', '=', 'file')->where('name', '=', 'pdf.pdf')->first()['path']);
+
+    return view('prueba')->with('contents',$contents);
+});
+   
