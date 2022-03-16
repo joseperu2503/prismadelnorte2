@@ -9,13 +9,14 @@
 @endsection
 @section('content')
     <h1 class="titulo">Inicio</h1>
+    {{-- <img src="https://drive.google.com/uc?export=download&id=1vS2s5E-0wOHYSXG5VGuBOZPoIer72i0Q" alt=""> --}}
     <a href="{{route('publicaciones.create')}}" class="btn btn-success mb-4">Nueva publicación</a>
     <div class="container">
         <div class="row" id="post-data">
-            @include('admin.posts')          
+            @include('admin.posts')       
         </div>      
     </div>
-    <div class="d-flex justify-content-center ajax-load" style="display: none">
+    <div class="d-flex justify-content-center spinner-disabled" id="spinner-post">
         <div class="spinner-border text-primary" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
@@ -56,9 +57,7 @@
                     buttonComentario();
                     
                     post.classList.add('post-load');
-                    
-                    
-                    
+                                   
                     var agregarComentarioFunction = function(){
 
                         var data = new FormData(form)
@@ -88,15 +87,15 @@
                 url:'?page=' + page,
                 type: 'get',
                 beforeSend: function(){
-                    $('.ajax-load').show();
+                    $('#spinner-post').removeClass("spinner-disabled");
                 }
             })
             .done(function(data){
                 if(data.html == ""){
-                    $(".ajax-load").html("No hay mas resultados");
+                    $("#spinner-post").html("No hay mas resultados");
                     return;
                 }
-                $(".ajax-load").hide();
+                $("#spinner-post").addClass("spinner-disabled");
                 $('#post-data').append(data.html);
                 miFuncion();
             })
@@ -107,6 +106,7 @@
         }
 
         var page = 1;
+        
         $(window).scroll(function(){
             if($(window).scrollTop() + $(window).height() >= $(document).height()){
                 page++;
@@ -114,7 +114,11 @@
             }
         });
 
-
+        // jquery para hacer responsive los videos de youtube
+        jQuery('.note-video-clip').each(function(){
+            var tmp = jQuery(this).wrap('<p/>').parent().html();
+            jQuery(this).parent().html('<div class="ratio ratio-16x9">'+tmp+'</div>');
+        });
 
 
     </script>

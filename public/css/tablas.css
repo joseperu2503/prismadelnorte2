@@ -1023,6 +1023,10 @@ a{
     display: none;
 }
 
+.spinner-disabled{
+    display: none !important;
+}
+
 /* --------Archivo------------- */
 
 .archivos-grid{

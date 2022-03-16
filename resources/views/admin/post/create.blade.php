@@ -12,7 +12,7 @@
 @endsection
 @section('content')
     <h1 class="titulo">Nueva Publicación</h1>
-    {{$post->id}}
+    {{-- {{$post->id}} --}}
     <div class="form-container">
         @if($errors->any())
             <div class="alert alert-danger" role="alert">
@@ -23,8 +23,8 @@
         @endif  
         <form action="{{route('publicaciones.store')}}" method="POST" enctype="multipart/form-data" id="form">
             @csrf
-            <label class="form-label">Título</label>
-            <input id="titulo" name="titulo" type="text" class="form-control mb-3" value="{{old('titulo')}}">           
+            <label class="form-label">Título*</label>
+            <input id="titulo" name="titulo" type="text" class="form-control mb-3" value="{{old('titulo')}}" required>           
             
             <label class="form-label">Imagen de portada</label>
             <label class="btn btn-outline-primary w-100 mb-3">
@@ -38,8 +38,9 @@
     
             <label class="form-label">Descripción</label>
             <textarea id="summernote" name="descripcion" type="text" class="form-control mb-3" rows="5" >{{old('descripcion')}}</textarea>
-            <label class="form-label mt-3">Contenido embebido</label>
-            <input id="iframe" name="iframe" type="text" class="form-control mb-3" value="{{old('iframe')}}">           
+            
+            {{-- <label class="form-label mt-3">Contenido embebido</label>
+            <input id="iframe" name="iframe" type="text" class="form-control mb-3" value="{{old('iframe')}}">            --}}
             
 
             <input type="hidden" name="id_post" value="{{$post->id}}">
@@ -52,7 +53,7 @@
 
         <form method="post" id="archivos-form">
             @csrf
-            <label class="form-label">Archivos</label>
+            <label class="form-label mt-3">Archivos</label>
             <input type="file" class="form-control mb-3" name="archivos[]" multiple id="formFileMultiple">
             <input type="hidden" name="id_post" value="{{$post->id}}">
         </form>
@@ -179,7 +180,7 @@
                 ['font', ['superscript', 'subscript']],
                 ['para', ['style','ul', 'ol', 'paragraph']],
                 ['height', ['height']],
-                ['insert',['link']]
+                ['insert',['link','video']]
             ]
         });
     </script>

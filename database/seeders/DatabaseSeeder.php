@@ -375,8 +375,8 @@ class DatabaseSeeder extends Seeder
         // $curso->id_aula = '7';
         // $curso->save();
 
-        //Profesor::factory(10)->create();
-        //Curso::factory(10)->create();
+        Profesor::factory(10)->create();
+        Curso::factory(10)->create();
         //Post::factory(50)->create();
         // Alumno::factory(100)->create();
     }

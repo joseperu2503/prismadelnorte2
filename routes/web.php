@@ -17,7 +17,12 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfesorController;
 use App\Http\Controllers\TrabajadorController;
 use App\Models\Trabajador;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\URL;
+
+Route::get('/linkstorage', function () {
+    Artisan::call('storage:link');
+});
 
 Route::get('/', function () {
     // return view('login.index');

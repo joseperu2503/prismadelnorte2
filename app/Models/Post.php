@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +19,9 @@ class Post extends Model
         'descripcion',
         'id_curso',
         'tarea',
-        'carpeta'
+        'carpeta',
+        'estado',
+        'fecha_hora'
     ];
 
     public function user(){
@@ -65,7 +68,7 @@ class Post extends Model
 
     public function getFechaCreacionAttribute()
     {   
-        return $this->created_at->diffForHumans();
+        return Carbon::parse($this->fecha_hora)->diffForHumans();
     }
 
     public function archivos()

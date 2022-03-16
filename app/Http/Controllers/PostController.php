@@ -32,13 +32,28 @@ class PostController extends Controller
      */
     public function create()
     {   
+        //Elimina los posts que no fueron ni publicados ni borrador
+        $posts = Post::select('*')->where('estado', 'eliminar')->where('id_user', auth()->user()->id)->get();
+        foreach($posts as $post){
+            foreach($post->archivos as $archivo){
+                $archivo->delete();
+            }
+            if($post->carpeta != null){
+                Storage::disk("google")->deleteDirectory($post->carpeta);
+            }
+            
+            $post->delete();
+        }
+
+        //crea un nuevo post en blanco
         $post_crear = Post::create([
             'id_user'=>auth()->user()->id,
-            'tarea'=>'1'
+            'tarea'=>'1',
+            'estado' =>'eliminar'
         ]);
-        $post = Post::select('*')->where('id', $post_crear->id)->first();  
+        
 
-        return view('admin.post.create')->with('post',$post); 
+        return view('admin.post.create')->with('post',$post_crear); 
     }
 
     public function create_profesor($id)
@@ -51,87 +66,28 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-        
+        //validacion
         $request->validate([
             'imagen' => 'image|mimes:jpeg,png,jpg'
         ]);
 
+        //busca el post
         $datos = $request->all();
         $post = Post::find($request->get('id_post'));
         
-
+        //si recibe una imagen de portada la guarda en el servidor y agrega su ubicacion a los datos del post
         if($request->file('imagen')) {  
             $nombre_img = date('YmdHis'). "." . $request->file('imagen')->getClientOriginalExtension();
             $imagen = $request->file('imagen')->storeAs('imagenes_post',$nombre_img,'public');
-            $post->imagen = Storage::url($imagen);
+            $datos['imagen'] = "/storage/imagenes_post/".$nombre_img;
             
         }
-
+        $datos['estado'] = 'publicar';
+        $datos['fecha_hora'] = date("Y-m-d H:i:s");
+        //actualiza el post
         $post->update($datos);
-
-        //Drive
-        if($request->get('id_curso') && $request->hasFile('archivos')){
-
-            $curso=Curso::select('*')
-            ->where('id',$request->get('id_curso'))
-            ->first();
-            
-            $contents = collect(Storage::disk("google")->listContents('/', false));
-            
-            $carpeta_aula = $contents
-                ->where('type', '=', 'dir')
-                ->where('name', '=', $curso->aula->aula)
-                ->first(); 
-            
-            if(!$carpeta_aula){
-                Storage::disk("google")->makeDirectory($curso->aula->aula);
-                do{                   
-                    $contents = collect(Storage::disk("google")->listContents('/', false));
-            
-                    $carpeta_aula = $contents
-                        ->where('type', '=', 'dir')
-                        ->where('name', '=', $curso->aula->aula)
-                        ->first();  
-                }while($carpeta_aula==null);
-            }
-
-            $contents = collect(Storage::disk("google")->listContents($carpeta_aula['path'], false));
-            
-            $carpeta_curso = $contents
-                ->where('type', '=', 'dir')
-                ->where('name', '=', $curso->nombre)
-                ->first(); 
-
-            if(!$carpeta_curso){
-                Storage::disk("google")->makeDirectory($carpeta_aula['path']."/".$curso->nombre);
-                do{                   
-                    $contents = collect(Storage::disk("google")->listContents($carpeta_aula['path'], false));
-            
-                    $carpeta_curso = $contents
-                        ->where('type', '=', 'dir')
-                        ->where('name', '=', $curso->nombre)
-                        ->first();  
-                }while($carpeta_curso==null);
-            }
-            Storage::disk("google")->makeDirectory($carpeta_curso['path']."/".$request->titulo);
-
-            do{
-                $contents = collect(Storage::disk("google")->listContents($carpeta_curso['path'], false));           
-                $carpeta_post = $contents
-                    ->where('type', '=', 'dir')
-                    ->where('name', '=', $request->titulo)
-                    ->first();
-            }while($carpeta_post==null);           
-            $post->carpeta = $carpeta_post['path'];
-
-            $archivos = $request->file('archivos');
-            foreach($archivos as $archivo){ 
-                Storage::disk("google")->putFileAs($carpeta_post['path'],$archivo,$archivo->getClientOriginalName());
-            } 
-
-
-        }
-       
+     
+        //retorna vista
         if(auth()->user()->role=='admin'){
             if($request->id_curso){
                 return redirect()->route('curso.perfil',$request->id_curso);   
