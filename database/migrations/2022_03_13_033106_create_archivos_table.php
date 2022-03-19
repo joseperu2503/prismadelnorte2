@@ -18,6 +18,7 @@ class CreateArchivosTable extends Migration
             $table->unsignedBigInteger('id_post');
             $table->text('path');
             $table->string('nombre');
+            $table->string('estado');
             $table->timestamps();
 
             $table->foreign('id_post')->references('id')->on('posts');

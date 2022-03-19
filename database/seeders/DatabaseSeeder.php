@@ -108,8 +108,8 @@ class DatabaseSeeder extends Seeder
 
 
         $user = new User;
-        $user->dni = '74706220';
-        $user->password = 'pegi';
+        $user->dni = '12345678';
+        $user->password = 'prismadelnorte';
         $user->role = 'admin';
         $user->save();
 
@@ -376,7 +376,7 @@ class DatabaseSeeder extends Seeder
         // $curso->save();
 
         Profesor::factory(10)->create();
-        Curso::factory(10)->create();
+        Curso::factory(50)->create();
         //Post::factory(50)->create();
         // Alumno::factory(100)->create();
     }

@@ -7,7 +7,14 @@
             
             <div>
                 <p class="fw-bold my-0">{{$post->autor}}</p>
+                @if ($post->estado=='publicar')
                 <p class="card-text"><small class="text-muted">{{$post->fechacreacion}}</small></p>
+                @elseif($post->estado=='borrador')
+                <p class="card-text"><small class="text-danger">Borrador</small></p>   
+                @elseif($post->estado=='programar')
+                <p class="card-text"><small class="text-success">Se publicará {{$post->fechacreacion}}</small></p>
+                @endif
+                
             </div>
         </div>    
         <div class="w-100">
@@ -53,22 +60,21 @@
 
         @if (isset($post->carpeta))
         <div class="archivos-grid my-3">
-            @foreach ($post->archivos as $archivo)
+            @foreach ($post->archivos->where('estado','publicar') as $archivo)
                 <x-archivo :archivo="$archivo" tipo="mostrar" idPost='1'/>
             @endforeach
         </div>
         @endif   
 
         {{-- Tag del curso --}}
-        @if (isset($post->id_curso))
+        @if ($post->id_curso!=null)
             <div>
                 <a @if (auth()->user()->role=='admin' || auth()->user()->role=='profesor') href="/curso_perfil/{{$post->curso->id}}"
                 @elseif(auth()->user()->role=='alumno')  href="/alumno/cursos/{{$post->curso->codigo}}" 
                 @endif class="btn btn-outline-primary btn-sm rounded-pill">
                     {{$post->curso->nombre}}
                 </a>
-            </div>
-            
+            </div>          
         @endif                     
     </div>
 

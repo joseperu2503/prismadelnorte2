@@ -9,36 +9,25 @@ use Illuminate\Support\Facades\Storage;
 
 class ArchivoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {   
-        
+        //Busca el post
         $post = Post::find($request->get('id_post'));
+
+        //Si el post no tiene carpeta en drive lo crea
         if( $post->carpeta == null){
             Storage::disk("google")->makeDirectory($request->get('id_post'));
             do{                   
@@ -53,10 +42,15 @@ class ArchivoController extends Controller
             $post->save();
         }
         
+        //archivos recividos
+        if($request->file('archivos')){
+            $archivos = $request->file('archivos');
+        }elseif($request->file('archivos_editar')){
+            $archivos = $request->file('archivos_editar');
+        }
         
-        
-        $archivos = $request->file('archivos');
 
+        //almacenar los archivos
         foreach($archivos as $archivo){
             $verficacion = collect(Storage::disk("google")->listContents($post->carpeta, false))
                 ->where('type', '=', 'file')
@@ -69,61 +63,48 @@ class ArchivoController extends Controller
                     ->where('name', '=', $archivo->getClientOriginalName())
                     ->first();
                 $path = explode("/", $archivo_drive['path']);
-                $archivo = Archivo::create([
-                    'id_post'=>$request->get('id_post'),
-                    'path'=>end($path),
-                    'nombre' => $archivo->getClientOriginalName()
-                ]);
-            }
-            
+                if($request->file('archivos')){
+                    $archivo = Archivo::create([
+                        'id_post'=>$request->get('id_post'),
+                        'path'=>end($path),
+                        'nombre' => $archivo->getClientOriginalName(),                   
+                        'estado' => 'publicar'
+                    ]);
+
+                }elseif($request->file('archivos_editar')){
+                    $archivo = Archivo::create([
+                        'id_post'=>$request->get('id_post'),
+                        'path'=>end($path),
+                        'nombre' => $archivo->getClientOriginalName(),                   
+                        'estado' => 'nuevo_editar'
+                    ]);
+
+                }
+               
+            }          
         } 
-   
-        $view = view('render.archivos',compact('post'))->render();
+        $cancelar='1';
+        $view = view('render.archivos')->with('post',$post)->with('cancelar',$cancelar)->render();
         return response()->json([      
             'html'=>$view
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         
@@ -137,6 +118,24 @@ class ArchivoController extends Controller
         $archivo->delete();        
         $post = Post::select('*')->where('id', $request->get('id_post'))->first();   
         $view = view('render.archivos',compact('post'))->render();
+        return response()->json([      
+            'html'=>$view
+        ]);
+    }
+    public function eliminar_archivo_editar(Request $request)
+    {
+        
+        $archivo = Archivo::find($request->get('id'));
+        if($archivo->estado=='nuevo_editar'){
+            Storage::disk("google")->delete($archivo->path);
+            $archivo->delete();  
+        }elseif($archivo->estado=='publicar'){
+            $archivo->estado = 'eliminar_editar';
+            $archivo->save(); 
+        }     
+        $post = Post::select('*')->where('id', $request->get('id_post'))->first();  
+        $cancelar='1'; 
+        $view = view('render.archivos')->with('post',$post)->with('cancelar',$cancelar)->render();
         return response()->json([      
             'html'=>$view
         ]);

@@ -76,4 +76,9 @@ class Post extends Model
         return $this->hasMany(Archivo::class,'id_post');
     }
 
+    public function alumnospost()
+    {
+        return $this->hasMany(AlumnoPost::class,'id_post');
+    }
+
 }

@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>@yield('title') - Laravel App</title>
+    <link rel="shortcut icon" href="https://i.postimg.cc/jj9jhhDj/prismaicono.png">
+    <title>@yield('title')</title>
     
     <!-- Tailwind CSS Link -->
     <link rel="stylesheet" 

@@ -7,12 +7,12 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">   
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
    
 @endsection
 @section('content')
     <h1 class="titulo">Nueva Publicación</h1>
-    {{-- {{$post->id}} --}}
+    
     <div class="form-container">
         @if($errors->any())
             <div class="alert alert-danger" role="alert">
@@ -21,76 +21,149 @@
                 @endforeach
             </div>
         @endif  
-        <form action="{{route('publicaciones.store')}}" method="POST" enctype="multipart/form-data" id="form">
-            @csrf
-            <label class="form-label">Título*</label>
-            <input id="titulo" name="titulo" type="text" class="form-control mb-3" value="{{old('titulo')}}" required>           
+        <input type="hidden" id="id_user" value="{{auth()->user()->id}}">
+        <div class="container">
+            <div class="row">
+                <div class="col-8">
+                    <form  method="POST" enctype="multipart/form-data" id="form">
+                        @csrf
+                        <div id="estado">
+
+                        </div>
+                        <label class="form-label">Título*</label>
+                        <input id="titulo" name="titulo" type="text" class="form-control mb-3" value="{{old('titulo')}}" required>           
+                        
+                        <label class="form-label">Imagen de portada</label>
+                        <label class="btn btn-outline-primary w-100 mb-3">
+                            <i class="fas fa-image"></i>
+                            <p class="m-0">Seleccione la imagen</p>
+                            <input id="imagen" type="file" name="imagen" class="hidden" >
+                        </label>
+                        <div class="d-flex justify-content-center my-3">
+                            <img class="col-12 col-sm-8 col-md-6"  id="imagenSeleccionada">
+                        </div>  
+                
+                        <label class="form-label">Descripción</label>
+                        <textarea id="summernote" name="descripcion" type="text" class="form-control mb-3" rows="5" >{{old('descripcion')}}</textarea>
+                        
+                        {{-- <label class="form-label mt-3">Contenido embebido</label>
+                        <input id="iframe" name="iframe" type="text" class="form-control mb-3" value="{{old('iframe')}}">            --}}
+                        
             
-            <label class="form-label">Imagen de portada</label>
-            <label class="btn btn-outline-primary w-100 mb-3">
-                <i class="fas fa-image"></i>
-                <p class="m-0">Seleccione la imagen</p>
-                <input id="imagen" type="file" name="imagen" class="hidden" >
-            </label>
-            <div class="d-flex justify-content-center my-3">
-                <img class="col-12 col-sm-8 col-md-6"  id="imagenSeleccionada">
-            </div>  
-    
-            <label class="form-label">Descripción</label>
-            <textarea id="summernote" name="descripcion" type="text" class="form-control mb-3" rows="5" >{{old('descripcion')}}</textarea>
+                        <input type="hidden" name="id_post" value="{{$post->id}}">
             
-            {{-- <label class="form-label mt-3">Contenido embebido</label>
-            <input id="iframe" name="iframe" type="text" class="form-control mb-3" value="{{old('iframe')}}">            --}}
+                        @if (isset($curso->id))
+                            <input type="hidden" name="id_curso" value="{{$curso->id}}">
+                        @endif           
+                                
+                    </form>
             
-
-            <input type="hidden" name="id_post" value="{{$post->id}}">
-
-            @if (isset($curso->id))
-                <input type="hidden" name="id_curso" value="{{$curso->id}}">
-            @endif           
-                     
-        </form>
-
-        <form method="post" id="archivos-form">
-            @csrf
-            <label class="form-label mt-3">Archivos</label>
-            <input type="file" class="form-control mb-3" name="archivos[]" multiple id="formFileMultiple">
-            <input type="hidden" name="id_post" value="{{$post->id}}">
-        </form>
-
-        @include('render.archivos')
-
-        <div id="spinner-cargando" style="display: none" class="my-4">
-            <div class="d-flex flex-column align-items-center">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Cargando archivos...</span>
+                    <form method="post" id="archivos-form">
+                        @csrf
+                        <label class="form-label mt-3">Archivos</label>
+                        <input type="file" class="form-control mb-3" name="archivos[]" multiple id="formFileMultiple">
+                        <input type="hidden" name="id_post" value="{{$post->id}}">
+                    </form>
+            
+                    @include('render.archivos')
+            
+                    <div id="spinner-cargando" style="display: none" class="my-4">
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando archivos...</span>
+                            </div>
+                            <div>
+                                Cargando archivos...
+                            </div>
+                        </div>
+                    </div>
+                    <div id="spinner-eliminando" style="display: none" class="my-4">
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando archivos...</span>
+                            </div>
+                            <div>
+                                Eliminando archivos...
+                            </div>
+                        </div>
+                    </div>
+                    
+            
+                    <div class="buttons-form mt-5">
+                        <a href="javascript:history.back()" class="btn btn-danger">Cancelar</a>
+                                              
+                        <div class="btn-group">
+                            <button type="submit" form="form" class="btn btn-success" id="publicar1">Publicar</button>
+                            <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false" id="otras-opciones">
+                              <span class="visually-hidden">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                              <li><a class="dropdown-item"><button type="submit" form="form" style="border:none;width:100%;text-align:left" class="bg-transparent" id="publicar2">Publicar</button></a></li>
+                              <li><a class="dropdown-item"><button type="button" style="border:none;width:100%;text-align:left" class="bg-transparent" id="boton-programar" data-bs-toggle="modal" data-bs-target="#exampleModal">Programar</button></a></li>
+                              <li><a class="dropdown-item"><button type="submit" form="form" style="border:none;width:100%;text-align:left" class="bg-transparent" id="borrador">Guardar borrador</button></a></li>                            
+                            </ul>
+                          </div>
+                    </div> 
                 </div>
-                <div>
-                    Cargando archivos...
-                </div>
-            </div>
-        </div>
-        <div id="spinner-eliminando" style="display: none" class="my-4">
-            <div class="d-flex flex-column align-items-center">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Cargando archivos...</span>
-                </div>
-                <div>
-                    Eliminando archivos...
-                </div>
+                <div class="col-4 border-start">
+                    <label class="form-label">Para:</label>
+                      
+                    <div id="aulas">
+                        <div class="dropdown">
+                            <button class="form-select aulas-boton" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style="width:250px;text-align:left">
+                                Todas las aulas
+                            </button>
+                            <div class="dropdown-menu p-2" aria-labelledby="dropdownMenuButton1" style="width: max-content">
+                                <div class="form-check">
+                                    <input class="form-check-input todas-aulas"  type="checkbox" value="0" id="flexCheckDefault" placeholder="Todas las aulas" form="form" checked>
+                                    <label>
+                                        Todas las aulas
+                                    </label>
+                                </div>
+                                @foreach ($aulas as $aula)                               
+                                <div class="form-check">
+                                    <input class="form-check-input aula-check" name="aulas[]" type="checkbox" value="{{$aula->id}}" id="flexCheckDefault" placeholder="{{$aula->aula}}" form="form" checked>
+                                    <label>
+                                        {{$aula->aula}}
+                                    </label>
+                                </div>
+                                @endforeach 
+                            </div>
+                        </div>
+                    </div>                
+                    <div id="alumnos" class="mt-3">
+                        <button class="form-select" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" disabled style="width:250px;text-align:left">
+                            Todos los Alumnos
+                        </button>
+                    </div>
+                    <div id="cursos" class="mt-3">
+                        
+                    </div>
+                </div>             
             </div>
         </div>
         
-
-        <div class="buttons-form mt-5">
-            <form method="post" id="cancelar-form">
-                @csrf
-                <input type="hidden" name="id_post" value="{{$post->id}}">
-                <button type="button" class="btn btn-danger" id="cancelar">Cancelar</button>
-            </form>
-            
-            <button type="submit" form="form" class="btn btn-success">Publicar</button>
-        </div> 
+    </div>
+   
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Programar publicación</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label class="form-label">Fecha y hora programada:</label>
+                <input class="form-control mb-3" type="date" name="fecha" id="fecha-programada" form="form" value="">
+                <input class="form-control" type="time" name="hora" id="hora-programada" form="form">
+                <div id="fecha-error" class="form-text text-danger"></div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary" id="programar" form="form">Programar</button>
+            </div>
+          </div>
+        </div>
     </div>
 @endsection
 @section('js')  
@@ -98,7 +171,7 @@
     <script>
         let spinnerCargando = document.getElementById('spinner-cargando');   
         let spinnerEliminando = document.getElementById('spinner-eliminando');      
-        let archivosForm = document.getElementById('archivos-form');
+        let archivosForm = document.getElementById('archivos-form');      
         archivosForm.addEventListener('change', function(){
             
             spinnerCargando.style.display = 'block';
@@ -140,18 +213,6 @@
                 botonArchivo();         
             });            
         });   
-        let cancelarBoton = document.getElementById('cancelar');     
-        var dataCancelar = new FormData(document.getElementById('cancelar-form'));  
-        cancelarBoton.addEventListener('click',function(){
-            fetch('{{route('post.delete')}}',{                        
-                method:'POST',
-                body: dataCancelar
-
-            }).then(window.history.back());
-
-        });
-
-
     </script>
 
     {{-- Scripts para mostrar la imagen cuando se seleccione --}}
@@ -184,6 +245,210 @@
             ]
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    <script >
+        let aulaCheckboxes = document.querySelectorAll(".aula-check");
+        let alumnos = document.getElementById('alumnos');
+        let cursos = document.getElementById('cursos');
+        const csrfToken = document.head.querySelector("[name~=csrf-token][content]").content;
+        let aulasBoton = document.querySelector(".aulas-boton");
+        let todasAulasCheckbox = document.querySelector(".todas-aulas");
+        let botonPublicar1 = document.querySelector("#publicar1");
+        let botonPublicar2 = document.querySelector("#publicar2");
+        let botonProgramar = document.querySelector("#programar");
+        let botonBorrador = document.querySelector("#borrador");
+        let botonOtrasOpciones = document.querySelector("#otras-opciones");
+        let estado = document.querySelector("#estado");
 
-       
+        var botonDeshabilitar = function($bool){            
+            botonPublicar1.disabled = $bool;
+            botonOtrasOpciones.disabled = $bool;
+        
+        }
+        todasAulasCheckbox.addEventListener('change', function(){
+            if(todasAulasCheckbox.checked==true){
+                aulaCheckboxes.forEach( checkbox => {
+                    checkbox.checked=true;
+                })
+                aulasBoton.innerHTML="Todas las aulas"
+                cursos.innerHTML=""
+                botonDeshabilitar(false);
+            }
+            else{
+                aulaCheckboxes.forEach( checkbox => {
+                    checkbox.checked=false;
+                })
+                aulasBoton.innerHTML="Ninguna aula"
+                cursos.innerHTML=""
+                botonDeshabilitar(true);
+            }
+        })
+
+        aulaCheckboxes.forEach( checkbox => {
+            
+            checkbox.addEventListener('change', function(){
+                numeroAulasSeleccionadas = document.querySelectorAll(".aula-check:checked").length;
+                if(numeroAulasSeleccionadas != aulaCheckboxes.length){
+                    todasAulasCheckbox.checked=false;
+                    if(numeroAulasSeleccionadas == 1){
+                        aulaUnicaSeleccionada = document.querySelector(".aula-check:checked");
+                        console.log(aulaUnicaSeleccionada.value);
+                        aulasBoton.innerHTML=aulaUnicaSeleccionada.placeholder;
+                        botonDeshabilitar(false);
+                        fetch('{{route('post.alumnos')}}',{                        
+                            method:'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                "X-CSRF-Token": csrfToken
+                            },
+                            body: JSON.stringify({id_aula: aulaUnicaSeleccionada.value})
+                        }).then(response => response.json())
+                        .then(data => {
+                            console.log('ok')        
+                            alumnos.innerHTML=data.html1;
+                            cursos.innerHTML=data.html2;
+                            let alumnoCheckboxes = document.querySelectorAll(".alumno-check");
+                            let todoAlumnosCheckbox = document.querySelector(".todos-alumnos");
+                            let alumnosBoton = document.querySelector(".alumnos-boton");
+                            todoAlumnosCheckbox.addEventListener('change', function(){
+                                if(todoAlumnosCheckbox.checked==true){
+                                    alumnoCheckboxes.forEach( checkbox => {
+                                        checkbox.checked=true;
+                                    })
+                                    alumnosBoton.innerHTML="Todas los alumnos"
+                                    botonDeshabilitar(false);
+                                }
+                                else{
+                                    alumnoCheckboxes.forEach( checkbox => {
+                                        checkbox.checked=false;
+                                    })
+                                    alumnosBoton.innerHTML="Ningun alumno"
+                                    botonDeshabilitar(true);
+                                }
+                            })
+                            alumnoCheckboxes.forEach( checkbox => {
+            
+                                checkbox.addEventListener('change', function(){
+                                    numeroAlumnosSeleccionados = document.querySelectorAll(".alumno-check:checked").length;
+                                    if(numeroAlumnosSeleccionados != alumnoCheckboxes.length){
+                                        todoAlumnosCheckbox.checked=false;                               
+                                        if(numeroAlumnosSeleccionados == 0){
+                                            alumnosBoton.innerHTML="Ningun alumno" 
+                                            botonDeshabilitar(true);
+                                        }else{
+                                            alumnosBoton.innerHTML=numeroAlumnosSeleccionados + " alumnos"
+                                            botonDeshabilitar(false);
+                                        }  
+                                    }else{
+                                        todoAlumnosCheckbox.checked=true;
+                                        alumnosBoton.innerHTML="Todos los alumnos"
+                                        botonDeshabilitar(false);
+                                    }
+                                })
+                            })
+
+                        });
+                    }
+                    else{
+                        alumnos.innerHTML="<button class='btn btn-light dropdown-toggle' type='button' id='dropdownMenuButton1' data-bs-toggle='dropdown' aria-expanded='false' disabled> Todos los alumnos </button>";
+                        cursos.innerHTML=""
+                        if(numeroAulasSeleccionadas == 0){
+                            aulasBoton.innerHTML="Ninguna aula" 
+                            botonDeshabilitar(true);
+                        }else{
+                            aulasBoton.innerHTML=numeroAulasSeleccionadas + " aulas"
+                            botonDeshabilitar(false);
+                        }
+                        
+                    }
+                }else{
+                    todasAulasCheckbox.checked=true;
+                    aulasBoton.innerHTML="Todas las aulas"
+                    botonDeshabilitar(false);
+                }
+            })
+        })
+
+        let postForm = document.getElementById('form');
+        botonPublicar1.addEventListener('click',function(){
+            estado.innerHTML="<input type='hidden' name='estado' value='publicar'>"
+            postForm.action = "{{route('publicaciones.store')}}"
+        })
+        botonPublicar2.addEventListener('click',function(){
+            estado.innerHTML="<input type='hidden' name='estado' value='publicar'>"
+            postForm.action = "{{route('publicaciones.store')}}"
+        })
+
+        botonProgramar.addEventListener('click',function(){
+            estado.innerHTML="<input type='hidden' name='estado' value='programar'>"
+            postForm.action = "{{route('publicaciones.store')}}"
+        })
+        
+        botonBorrador.addEventListener('click',function(){
+            estado.innerHTML="<input type='hidden' name='estado' value='borrador'>"
+            postForm.action = "{{route('publicaciones.store')}}"
+        })
+
+
+        //VALIDACION DE FECHA PROGRAMADA
+        let fechaProgramada = document.getElementById('fecha-programada');
+        let horaProgramada = document.getElementById('hora-programada');
+        let fechaError = document.getElementById('fecha-error');  
+        let botonProgramarModal = document.getElementById('boton-programar');
+        var fecha_actual = new Date();  
+        let tomorrow = new Date();
+        tomorrow.setDate(fecha_actual.getDate() + 1);
+        console.log(tomorrow);
+
+        let day = tomorrow.getDate()
+        let month = tomorrow.getMonth() + 1
+        let year = tomorrow.getFullYear()
+
+        if(month < 10){
+            mañana = year+"-0"+month+"-"+day
+        }else{
+            mañana = year+"-"+month+"-"+day
+        }
+        var verificarFecha = function(){
+            
+            var fecha=fechaProgramada.value
+            var hora=horaProgramada.value
+            var fechaHora = new Date(fecha+" "+hora).toISOString()
+            console.log(fecha_actual.getTime())
+            console.log(fechaProgramada.value)
+            if(fechaHora <= fecha_actual.toISOString()){
+                fechaProgramada.classList.add('is-invalid')
+                fechaError.innerHTML="Debe programarse para el futuro"
+                botonProgramar.disabled=true
+            }
+            else{
+                fechaProgramada.classList.remove('is-invalid')
+                fechaError.innerHTML=""
+                botonProgramar.disabled=false
+            }
+        }
+        fechaProgramada.addEventListener('change',verificarFecha)
+        horaProgramada.addEventListener('change',verificarFecha)
+        botonProgramarModal.addEventListener('click',function(){
+            fechaProgramada.value= mañana
+            horaProgramada.value= '08:00'
+        })
+
+        //Al salir de la pagina eliminará el post
+        window.addEventListener('beforeunload', function(event) {
+            event.preventDefault();
+            fetch('{{route('post.delete.editar')}}',{                        
+                method:'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "X-CSRF-Token": csrfToken
+                },
+                body: JSON.stringify({id_user: '{{auth()->user()->id}}'})
+            }).then(response => response.json())
+            .then(data => {
+                return true; 
+            })
+        });
+    </script>
 @endsection

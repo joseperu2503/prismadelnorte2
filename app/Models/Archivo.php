@@ -12,6 +12,7 @@ class Archivo extends Model
     protected $fillable = [
         'id_post',
         'path',
-        'nombre'
+        'nombre',
+        'estado'
     ];
 }

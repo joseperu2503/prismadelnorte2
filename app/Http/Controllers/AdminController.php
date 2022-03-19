@@ -13,7 +13,8 @@ class AdminController extends Controller
 {
     public function inicio(Request $request){
         $posts = Post::with(['comentarios.user','curso','user'])
-        ->orderby('created_at','desc')
+        ->orderby('estado','asc')
+        ->orderby('fecha_hora','desc')
         ->paginate(5);
         if($request->ajax()){
             $view = view('admin.posts',compact('posts'))->render();

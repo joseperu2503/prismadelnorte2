@@ -175,11 +175,17 @@ Route::post('/post/post_delete',[PostController::class, 'eliminar_post'])
     ->middleware('auth.profesor')
     ->name('post.delete');
 
-
-
 Route::get('/curso/{id}/crear_publicacion', [PostController::class,'create_profesor'])
     ->middleware('auth.profesor') //admin y profesor
     ->name('post.curso.create');
+
+Route::post('/post/eliminar_post_crear', [PostController::class,'eliminar_post_crear'])
+    ->middleware('auth.profesor') //admin y profesor
+    ->name('post.delete.crear');
+
+Route::post('/post/eliminar_post_editar', [PostController::class,'eliminar_post_editar'])
+    ->middleware('auth.profesor') //admin y profesor
+    ->name('post.delete.editar');
 
 //Comentarios
 
@@ -190,6 +196,14 @@ Route::resource('archivos',ArchivoController::class);
 
 Route::post('/archivo/archivo_delete',[ArchivoController::class, 'eliminar_archivo'])
     ->name('archivo.delete');
+
+Route::post('/archivo/archivo_delete_editar',[ArchivoController::class, 'eliminar_archivo_editar'])
+    ->name('archivo.delete.editar');
+
+//Post-alumnos
+
+Route::post('/alumnos_post',[PostController::class, 'alumnos'])
+    ->name('post.alumnos');
 
 //----------------------------Alumno-------------------------
 
@@ -227,10 +241,10 @@ Route::get('profesor/cursos', [ProfesorController::class,'cursos_usuario'])
     ->middleware('auth.profesor')
     ->name('profesor.cursos');
 
-Route::get('prueba', function(){
+// Route::get('prueba', function(){
 
-    $contents = (collect(Storage::disk("google")->listContents("/", false))->where('type', '=', 'file')->where('name', '=', 'pdf.pdf')->first()['path']);
+//     $contents = (collect(Storage::disk("google")->listContents("/", false))->where('type', '=', 'file')->where('name', '=', 'pdf.pdf')->first()['path']);
 
-    return view('prueba')->with('contents',$contents);
-});
+//     return view('prueba')->with('contents',$contents);
+// });
    
