@@ -19,27 +19,19 @@ date_default_timezone_set("America/Lima");
 
 class AlumnoController extends Controller
 {
-    public function index()
-    {
-        $alumnos = Alumno::with(['grado','aula'])->get();
-        return view('admin.alumnos.alumnos_todos')->with('alumnos',$alumnos);
-    }
-
-    public function createTodos()
-    {   
-        $grados = Grado::all();
-        $aulas = Aula::all();
-        $generos = Genero::all();
-        return view('admin.alumnos.create')->with('aulas',$aulas)->with('grados',$grados)->with('generos',$generos);
-    }
-
-
     public function create($id)
     {   
-        $aula = Aula::find($id);
         $grados = Grado::all();
         $generos = Genero::all();
-        return view('admin.alumnos.create')->with('aula',$aula)->with('grados',$grados)->with('generos',$generos);
+        if($id != 'todos'){
+            $aula = Aula::find($id);  
+            return view('admin.alumnos.create')->with('aula',$aula)->with('grados',$grados)->with('generos',$generos);
+        }
+        else{
+            $aulas = Aula::all();
+            return view('admin.alumnos.create')->with('aulas',$aulas)->with('grados',$grados)->with('generos',$generos);
+        }
+        
     }
 
     public function store(Request $request)
@@ -78,15 +70,15 @@ class AlumnoController extends Controller
 
             if($request->get('id_genero')=='1'){
                 if($request->get('return_aula')){
-                    return redirect()->route('admin.alumnos',$request->get('id_aula'))->with('message', 'Alumno <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> registrado correctamente');
+                    return redirect()->route('admin.alumnosPorAula',$request->get('id_aula'))->with('message', 'Alumno <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> registrado correctamente');
                 }else{
-                    return redirect()->route('alumnos.index')->with('message', 'Alumno <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> registrado correctamente');
+                    return redirect()->route('admin.alumnos')->with('message', 'Alumno <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> registrado correctamente');
                 }
             }else if($request->get('id_genero')=='2'){
                 if($request->get('return_aula')){
-                    return redirect()->route('admin.alumnos',$request->get('id_aula'))->with('message', 'Alumna <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> registrada correctamente');
+                    return redirect()->route('admin.alumnosPorAula',$request->get('id_aula'))->with('message', 'Alumna <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> registrada correctamente');
                 }else{
-                    return redirect()->route('alumnos.index')->with('message', 'Alumna <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> registrada correctamente');
+                    return redirect()->route('admin.alumnos')->with('message', 'Alumna <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> registrada correctamente');
                 }
             }
             
@@ -141,9 +133,9 @@ class AlumnoController extends Controller
 
 
         if($request->get('id_genero')=='1'){
-            return redirect()->route('admin.alumnos',$request->get('id_aula'))->with('message', 'Alumno <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> actualizado correctamente');
+            return redirect()->route('admin.alumnosPorAula',$request->get('id_aula'))->with('message', 'Alumno <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> actualizado correctamente');
         }else if($request->get('id_genero')=='2'){
-            return redirect()->route('admin.alumnos',$request->get('id_aula'))->with('message', 'Alumna <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> actualizada correctamente');
+            return redirect()->route('admin.alumnosPorAula',$request->get('id_aula'))->with('message', 'Alumna <b>'.$request->get('primer_nombre').' '.$request->get('apellido_paterno').'</b> actualizada correctamente');
         }
     }
 
@@ -153,7 +145,7 @@ class AlumnoController extends Controller
         $user = User::select('*')->where('dni', $alumno->dni)->first();
         $user->delete();
         $alumno->delete();
-        return redirect()->route('admin.alumnos',$alumno->id_aula);
+        return redirect()->route('admin.alumnosPorAula',$alumno->id_aula);
     }
 
 

@@ -7,7 +7,7 @@
 @section('content')
     <h1 class="titulo">Editar Aula</h1>
     <div class="form-container">  
-        <form action="{{route('aula.update',$aula->id)}}" method="POST">
+        <form action="{{route('admin.aula.update',$aula->id)}}" method="POST">
             @csrf
             @method('PUT')
             <label class="form-label">Código*</label>

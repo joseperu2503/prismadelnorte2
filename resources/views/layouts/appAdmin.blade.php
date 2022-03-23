@@ -27,15 +27,15 @@
       </li>
       <li>
         <div class="iocn-link">
-          <a href="{{route('alumnos.index')}}">
+          <a href="{{route('admin.alumnos')}}">
             <i class="fas fa-graduation-cap"></i>
             <span class="link_name">Alumnos</span>
           </a>
           <i class='bx bxs-chevron-down arrow' ></i>
         </div>
         <ul class="sub-menu">
-          <li><a class="link_name" href="{{route('alumnos.index')}}">Alumnos</a></li>
-          <li><a href="{{route('alumnos.index')}}">Todos los alumnos</a></li>     
+          <li><a class="link_name" href="{{route('admin.alumnos')}}">Alumnos</a></li>
+          <li><a href="{{route('admin.alumnos')}}">Todos los alumnos</a></li>     
           <li><a href="{{route('admin.aulas')}}">Alumnos por aula</a></li>   
         </ul>
       </li>

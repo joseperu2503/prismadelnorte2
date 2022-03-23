@@ -8,7 +8,7 @@
 
     <h1 class="titulo">Asistencia</h1>
 
-    <div class="table-responsive">
+    <div class="table-responsive p-1">
         <table id="table_id" class = "table table-hover">
             <thead>
                 <tr>

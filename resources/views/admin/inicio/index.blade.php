@@ -8,36 +8,37 @@
 
 @endsection
 @section('content')
-    <h1 class="titulo">Inicio</h1>
-    {{-- <img src="https://drive.google.com/uc?export=download&id=1vS2s5E-0wOHYSXG5VGuBOZPoIer72i0Q" alt=""> --}}
-    <a href="{{route('publicaciones.create')}}" class="btn btn-success mb-4">Nueva publicación</a>
-    <div class="container">
-        <div class="row" id="post-data">
-            @include('admin.posts')       
-        </div>      
-    </div>
-    <div class="d-flex justify-content-center spinner-disabled" id="spinner-post">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
+    <div class="container-sm col-12 offset-0 col-md-8 offset-md-2 p-0">
+        <h1 class="titulo">Inicio</h1>
+        <div class="btn-group mb-4">
+            <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            Crear
+            </button>
+            <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{route('admin.post.create','publicacion')}}">Publicación</a></li>
+            <li><a class="dropdown-item" href="{{route('admin.post.create','evaluacion')}}">Evaluación</a></li>     
+            </ul>
         </div>
+
+        <div id="post-data">
+            @include('admin.posts')       
+        </div>                
+        <x-spinner-post/>
     </div>
+    
     
 @endsection
 
 @section('js')
     
     <script>
-
-        var miFuncion = function(){  
-            let postData = document.getElementById('post-data');
-
-            postData.querySelectorAll('.post').forEach(post => {               
-                let comentarioContainer = post.querySelector('.comentarios-container');
-
-                let form = post.querySelector('#form')
-
-                if (!post.classList.contains( 'post-load' )) {
-                    
+        let postData = document.getElementById('post-data');
+        var verificarPosts = function(){             
+            postData.querySelectorAll('.post').forEach(post => {                             
+                if (!post.classList.contains( 'post-load' )) { 
+                    let comentarioContainer = post.querySelector('.comentarios-container');
+                    let form = post.querySelector('#form')
+                    let comentarioInput = post.querySelector('.form-control')                
                     var buttonComentario = function(){
                         let header = comentarioContainer.querySelector('.comentario-header');
                         let body = comentarioContainer.querySelector('.comentario-body');  
@@ -57,9 +58,20 @@
                     buttonComentario();
                     
                     post.classList.add('post-load');
-                                   
-                    var agregarComentarioFunction = function(){
+                    let botonEnviar=form.querySelector('#enviar')
+                    botonEnviar.disabled = true;
+                    comentarioInput.oninput = function(){
+                        if(comentarioInput.value.length == 0){
+                            botonEnviar.disabled = true;
+                            botonEnviar.classList.add('deshabilitado')
+                        }else{
+                            botonEnviar.disabled = false;
+                            botonEnviar.classList.remove('deshabilitado')
 
+                        }
+                    }
+                              
+                    var agregarComentario = function(){
                         var data = new FormData(form)
                         fetch('{{ route('comentarios.store') }}',{
                            
@@ -71,15 +83,29 @@
                             console.log('ok')              
                             comentarioContainer.innerHTML=data.html;
                             buttonComentario(); 
+                            comentarioInput.value=""
+                            botonEnviar.disabled = true;
+                            botonEnviar.classList.add('deshabilitado')
                         });
                     };
 
-                    form.querySelector('#enviar').addEventListener('click', agregarComentarioFunction);
+                    botonEnviar.addEventListener('click', agregarComentario);
+
+
+                    comentarioInput.addEventListener('keydown', autosize);
+                                
+                    function autosize(){
+                        var el = this;
+                        setTimeout(function(){
+                            el.style.cssText = 'height:auto; padding:0';
+                            el.style.cssText = 'height:' + el.scrollHeight + 'px';
+                        },0);
+                    }
                 }
             })
         };
 
-        miFuncion();
+        verificarPosts();
 
         function loadMoreData(page)
         {
@@ -97,7 +123,7 @@
                 }
                 $("#spinner-post").addClass("spinner-disabled");
                 $('#post-data').append(data.html);
-                miFuncion();
+                verificarPosts();
             })
             .fail(function(jqXHR, ajaxOptions, thrownError){
                 alert("Server not responding..")

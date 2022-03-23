@@ -20,7 +20,7 @@
             -Respetar mayúsculas y minúsculas <br>
             -La contraseña debe ser 4 letras, las dos primeras letras del apellido paterno seguidas de las dos primeras letras del apellido materno
         </div>
-        <form action="{{route('alumnos.store')}}" method="POST">
+        <form action="{{route('admin.alumno.store')}}" method="POST">
             @csrf    
             <h3 class="text-center text-body">Datos del alumno</h3>
             <label class="form-label">DNI*</label>
@@ -120,7 +120,7 @@
             <input id="telefono_apoderado" name="telefono_apoderado" type="number" class="form-control mb-3" value="{{old('telefono_apoderado')}}">
          
             <div class="buttons-form">
-                <a href="{{route('admin.alumnos',$aula->id)}}" class="btn btn-danger">Cancelar</a>
+                <a href="javascript:history.back()" class="btn btn-danger">Cancelar</a>
                 <button type="submit" class="btn btn-success">Guardar</button>
             </div>          
         </form>

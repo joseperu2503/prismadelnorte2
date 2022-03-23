@@ -10,7 +10,7 @@
 
 @section('content')
 <h1 class = "titulo">Asistencia de alumnos</h1>
-<div class="table-responsive">
+<div class="table-responsive p-1">
     <table id="table_id" class = "table table-hover">
         <thead>
             <tr>
@@ -56,4 +56,9 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.11.4/b-2.2.2/b-html5-2.2.2/b-print-2.2.2/datatables.min.js"></script>
     <script src="{{asset('js/datatable.js')}}"></script>
+    <script>
+        $.extend( $.fn.dataTable.defaults, {
+            order: []
+        });
+    </script>
 @endsection

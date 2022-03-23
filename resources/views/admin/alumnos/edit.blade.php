@@ -19,7 +19,7 @@
         -Respetar mayúsculas y minúsculas <br>
         -La contraseña debe ser 4 letras, las dos primeras letras del apellido paterno seguidas de las dos primeras letras del apellido materno
     </div>
-    <form action="{{route('alumnos.update',$alumno->id)}}" method="POST">
+    <form action="{{route('admin.alumno.update',$alumno->id)}}" method="POST">
         @csrf
         @method('PUT')
         <h3 class="text-center text-body">Datos del alumno</h3>
@@ -118,7 +118,7 @@
         <input id="telefono_apoderado" name="telefono_apoderado" type="number" class="form-control mb-3" value="{{$alumno->telefono_apoderado}}">
         
         <div class="buttons-form">
-            <a href="{{route('admin.alumnos',$alumno->id_aula)}}" class="btn btn-danger">Cancelar</a>
+            <a href="javascript:history.back()" class="btn btn-danger">Cancelar</a>
             <button type="submit" class="btn btn-success" >Actualizar</button>
         </div>          
     </form>

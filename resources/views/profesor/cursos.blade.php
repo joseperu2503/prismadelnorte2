@@ -8,7 +8,7 @@
 
     <h1 class="titulo">Cursos</h1>
 
-    <div class="table-responsive">
+    <div class="table-responsive p-1">
         <table class = "table table-hover">
             <thead>
                 <tr>                    

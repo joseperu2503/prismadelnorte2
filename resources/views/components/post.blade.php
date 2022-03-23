@@ -1,4 +1,4 @@
-<div class="card col-12 offset-0 mb-4 col-md-8 offset-md-2 mb-4 shadow p-0 post" id="post">   
+<div class="card  mb-4 shadow p-0 post" id="post">   
     <div class="d-flex align-items-center gap-3 card-header">
         <div class="d-flex align-items-center gap-3" style="min-width: max-content">
             <div>
@@ -26,9 +26,9 @@
                 <i class="fas fa-ellipsis-v"></i>
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item" href="{{route('publicaciones.edit',$post->id)}}">Editar</a></li>
+                <li><a class="dropdown-item" href="{{route('admin.post.edit',[$post->tipo,$post->id])}}">Editar</a></li>
                 <li>
-                    <form action="{{route('publicaciones.destroy',$post->id)}}" method="POST" class="dropdown-item formEliminar">
+                    <form action="{{route('admin.post.destroy',$post->id)}}" method="POST" class="dropdown-item formEliminar">
                         @csrf
                         @method('DELETE')
                         <button type="submit" style="border: none; background:transparent">Eliminar</button>
@@ -69,9 +69,10 @@
         {{-- Tag del curso --}}
         @if ($post->id_curso!=null)
             <div>
-                <a @if (auth()->user()->role=='admin' || auth()->user()->role=='profesor') href="/curso_perfil/{{$post->curso->id}}"
-                @elseif(auth()->user()->role=='alumno')  href="/alumno/cursos/{{$post->curso->codigo}}" 
-                @endif class="btn btn-outline-primary btn-sm rounded-pill">
+                <a @if (auth()->user()->role=='admin') href="{{route('admin.curso.perfil',$post->curso->id)}}"
+                    @elseif(auth()->user()->role=='profesor')  href="{{route('profesor.curso.perfil',$post->curso->id)}}"     
+                    @elseif(auth()->user()->role=='alumno')  href="/alumno/cursos/{{$post->curso->codigo}}" 
+                    @endif class="btn btn-outline-primary btn-sm rounded-pill">
                     {{$post->curso->nombre}}
                 </a>
             </div>          
@@ -102,7 +103,7 @@
             </div>
             <input type="hidden" name="id_user" value="{{auth()->user()->id}}">
             <input type="hidden" name="id_post" value="{{$post->id}}">
-            <button class="puntos" type="button" id="enviar">
+            <button class="enviar-comentario deshabilitado" type="button" id="enviar">
                 <i class="fas fa-arrow-right"></i>
             </button>
                             

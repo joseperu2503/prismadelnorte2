@@ -7,7 +7,7 @@
 @section('content')
     <h1 class="titulo">Editar profesor</h1>
     <div class="form-container">  
-        <form action="{{route('profesores.update',$profesor->id)}}" method="POST">
+        <form action="{{route('admin.profesor.update',$profesor->id)}}" method="POST">
             @csrf
             @method('PUT')
             <label class="form-label">DNI</label>
@@ -47,7 +47,7 @@
                 </div>
             @endif
             <div class="buttons-form">
-                <a href="/profesores" class="btn btn-danger">Cancelar</a>
+                <a href="{{route('admin.profesores')}}" class="btn btn-danger">Cancelar</a>
                 <button type="submit" class="btn btn-success">Actualizar</button>
             </div>          
         </form>

@@ -22,9 +22,10 @@ class CreatePostsTable extends Migration
             $table->text('descripcion')->nullable();
             $table->text('carpeta')->nullable();
             $table->unsignedBigInteger('id_curso')->nullable();     
-            $table->integer('tarea');    
-            $table->timestamp('fecha_hora')->nullable();   
+            $table->string('tipo');    
+            $table->timestamp('fecha_publicacion')->nullable();   
             $table->string('estado')->nullable(); 
+            $table->string('recibir')->nullable()->default('no'); 
             $table->timestamps();
 
             $table->foreign('id_user')->references('id')->on('users');

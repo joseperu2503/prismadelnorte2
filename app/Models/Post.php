@@ -15,13 +15,13 @@ class Post extends Model
         'id_user',
         'titulo',
         'imagen',
-        'iframe',
         'descripcion',
         'id_curso',
-        'tarea',
+        'tipo',
         'carpeta',
         'estado',
-        'fecha_hora'
+        'recibir',
+        'fecha_publicacion'
     ];
 
     public function user(){
@@ -68,7 +68,7 @@ class Post extends Model
 
     public function getFechaCreacionAttribute()
     {   
-        return Carbon::parse($this->fecha_hora)->diffForHumans();
+        return Carbon::parse($this->fecha_publicacion)->diffForHumans();
     }
 
     public function archivos()

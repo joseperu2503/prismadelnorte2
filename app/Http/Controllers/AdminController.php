@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Alumno;
 use App\Models\Aula;
 use App\Models\Curso;
 use App\Models\Post;
@@ -14,7 +15,7 @@ class AdminController extends Controller
     public function inicio(Request $request){
         $posts = Post::with(['comentarios.user','curso','user'])
         ->orderby('estado','asc')
-        ->orderby('fecha_hora','desc')
+        ->orderby('fecha_publicacion','desc')
         ->paginate(5);
         if($request->ajax()){
             $view = view('admin.posts',compact('posts'))->render();
@@ -40,13 +41,19 @@ class AdminController extends Controller
         return view('admin.cursos.index')->with('cursos',$cursos);
     }
 
-    public function Alumnos_aula($aula_id){
+    public function todosLosAlumnos()
+    {
+        $alumnos = Alumno::with(['grado','aula'])->orderby('apellido_paterno','asc')->get();
+        return view('admin.alumnos.todosLosAlumnos')->with('alumnos',$alumnos);
+    }
+    
+    public function AlumnosPorAula($aula_id){
         $aula = Aula::find($aula_id);
-        return view('admin.alumnos.alumnos_aula')->with('aula',$aula);
+        return view('admin.alumnos.alumnosPorAula')->with('aula',$aula);
     }
 
     public function Trabajadores(){
-        $trabajadores = Trabajador::all();
+        $trabajadores = Trabajador::all();       
         return view('admin.trabajador.index')->with('trabajadores',$trabajadores);
     }
 

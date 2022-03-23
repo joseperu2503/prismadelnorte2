@@ -7,7 +7,7 @@
 @section('content')
     <h1 class="titulo">Nuevo Profesor</h1>
     <div class="form-container">  
-        <form action="{{route('profesores.store')}}" method="POST">
+        <form action="{{route('admin.profesor.store')}}" method="POST">
             @csrf
             <label class="form-label">DNI*</label>
             <input id="dni" name="dni" type="number" class="form-control mb-3" value="{{old('dni')}}">
@@ -42,7 +42,7 @@
                 </div>
             @endif
             <div class="buttons-form">
-                <a href="/profesores" class="btn btn-danger">Cancelar</a>
+                <a href="{{route('admin.profesores')}}" class="btn btn-danger">Cancelar</a>
                 <button type="submit" class="btn btn-success">Guardar</button>
             </div>          
         </form>

@@ -21,7 +21,7 @@
 	@yield('sidebar')
 
 	<section class="home-section">   
-		<main class="main">
+		<main class="main container">
 			@yield('content')
 		</main>
 	</section>

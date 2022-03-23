@@ -10,9 +10,9 @@
 @section('content')
 
     <h1 class="titulo">Profesores</h1>
-    <a href="{{route('profesores.create')}}" class="btn btn-success mb-4">Nuevo</a>
+    <a href="{{route('admin.profesor.create')}}" class="btn btn-success mb-4">Nuevo</a>
 
-    <div class="table-responsive">
+    <div class="table-responsive p-1">
         <table id="table_id" class = "table table-hover">
             <thead>
                 <tr>
@@ -35,9 +35,9 @@
                     <td class="align-middle">{{ucwords($profesor->primer_nombre)}}</td>
                     <td class="align-middle">{{ucwords($profesor->segundo_nombre)}}</td>							
                     <td class="align-middle">     
-                        <form action="{{route('profesores.destroy',$profesor->id)}}" method="POST" class="botones formEliminar"> 
+                        <form action="{{route('admin.profesor.destroy',$profesor->id)}}" method="POST" class="botones formEliminar"> 
                             <a href="{{route('admin.profesor.inicio',$profesor->id)}}" class="btn btn-success">Entrar</a>
-                            <a href="{{route('profesores.edit',$profesor->id)}}" class="btn btn-warning">Editar</a>
+                            <a href="{{route('admin.profesor.edit',$profesor->id)}}" class="btn btn-warning">Editar</a>
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">Eliminar</button>
@@ -56,6 +56,11 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.11.4/b-2.2.2/b-html5-2.2.2/b-print-2.2.2/datatables.min.js"></script>
     <script src="{{asset('js/datatable.js')}}"></script>
+    <script>
+        $.extend( $.fn.dataTable.defaults, {
+            order: []
+        });
+    </script>
     <script src="{{asset('js/sweetAlert.js')}}"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endsection

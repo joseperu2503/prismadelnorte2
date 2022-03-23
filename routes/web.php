@@ -29,95 +29,66 @@ Route::get('/', function () {
     return redirect()->route('login.index');
 })->middleware('auth');
 
-Route::get('/login', [SessionsController::class,'create'])
-    ->middleware('guest')
-    ->name('login.index');
-Route::post('/login', [SessionsController::class,'store'])
-->name('login.store');
-Route::get('/logout', [SessionsController::class,'destroy'])
-    ->middleware('auth')
-    ->name('login.destroy');
+Route::get('/login', [SessionsController::class,'create'])->middleware('guest')->name('login.index');
+Route::post('/login', [SessionsController::class,'store'])->name('login.store');
+Route::get('/logout', [SessionsController::class,'destroy'])->middleware('auth')->name('login.destroy');
 
 
-Route::get('/register', [RegisterController::class,'create'])
-    ->middleware('guest')
-    ->name('register.index');
-Route::post('/register', [RegisterController::class,'store'])
-    ->name('register.store');
-
-
+Route::get('/register', [RegisterController::class,'create'])->middleware('guest')->name('register.index');
+Route::post('/register', [RegisterController::class,'store'])->name('register.store');
 
 //----------------------------Admin-------------------------
 
-/*inicio*/
-Route::get('admin/inicio', [AdminController::class,'inicio'])
-    ->middleware('auth.admin')
-    ->name('admin.inicio');
+// Inicio
+Route::get('admin/inicio', [AdminController::class,'inicio'])->middleware('auth.admin')->name('admin.inicio');
+//Aulas
+Route::get('admin/aulas', [AdminController::class,'aulas'])->middleware('auth.admin')->name('admin.aulas');
+Route::get('admin/aula/nuevo', [AulaController::class,'create'])->middleware('auth.admin')->name('admin.aula.create');
+Route::post('admin/aula/guardar', [AulaController::class,'store'])->middleware('auth.admin')->name('admin.aula.store');
+Route::get('admin/aula/{id}/editar', [AulaController::class,'edit'])->middleware('auth.admin')->name('admin.aula.edit');
+Route::put('admin/aula/{id}/actualizar', [AulaController::class,'update'])->middleware('auth.admin')->name('admin.aula.update');
+Route::delete('admin/aula/{id}/eliminar', [AulaController::class,'destroy'])->middleware('auth.admin')->name('admin.aula.destroy');
 
-/*aulas*/
-Route::get('admin/aulas', [AdminController::class,'aulas'])
-    ->middleware('auth.admin')
-    ->name('admin.aulas');
+//Cursos
 
-Route::resource('aula',AulaController::class)
-    ->middleware('auth.admin');
+Route::get('admin/cursos', [AdminController::class,'cursos'])->middleware('auth.admin')->name('admin.cursos');
+Route::get('admin/curso/nuevo', [CursoController::class,'create'])->middleware('auth.admin')->name('admin.curso.create');
+Route::post('admin/curso/guardar', [CursoController::class,'store'])->middleware('auth.admin')->name('admin.curso.store');
+Route::get('admin/curso/{id}/editar', [CursoController::class,'edit'])->middleware('auth.admin')->name('admin.curso.edit');
+Route::put('admin/curso/{id}/actualizar', [CursoController::class,'update'])->middleware('auth.admin')->name('admin.curso.update');
+Route::delete('admin/curso/{id}/eliminar', [CursoController::class,'destroy'])->middleware('auth.admin')->name('admin.curso.destroy');
 
+Route::get('admin/curso/{id}', [CursoController::class,'perfil'])->middleware('auth.admin')->name('admin.curso.perfil');
+Route::get('profesor/curso/{id}', [CursoController::class,'perfil'])->middleware('auth.profesor')->name('profesor.curso.perfil');
 
-/*cursos*/
-
-Route::get('admin/cursos', [AdminController::class,'cursos'])
-    ->middleware('auth.admin')
-    ->name('admin.cursos');
-
-Route::get('/curso_perfil/{id}', [CursoController::class,'perfil'])
-    ->middleware('auth.profesor') //admin y profesor
-    ->name('curso.perfil');
-
-Route::resource('curso',CursoController::class)
-    ->middleware('auth.admin');
 
 /*profesores*/
 
-Route::get('admin/profesores', [AdminController::class,'profesores'])
-    ->middleware('auth.admin')
-    ->name('admin.profesores');
+Route::get('admin/profesores', [AdminController::class,'profesores'])->middleware('auth.admin')->name('admin.profesores');
+Route::get('admin/profesor/nuevo', [ProfesorController::class,'create'])->middleware('auth.admin')->name('admin.profesor.create');
+Route::post('admin/profesor/guardar', [ProfesorController::class,'store'])->middleware('auth.admin')->name('admin.profesor.store');
+Route::get('admin/profesor/{id}/editar', [ProfesorController::class,'edit'])->middleware('auth.admin')->name('admin.profesor.edit');
+Route::put('admin/profesor/{id}/actualizar', [ProfesorController::class,'update'])->middleware('auth.admin')->name('admin.profesor.update');
+Route::delete('admin/profesor/{id}/eliminar', [ProfesorController::class,'destroy'])->middleware('auth.admin')->name('admin.profesor.destroy');
 
-Route::resource('profesores',ProfesorController::class)
-    ->middleware('auth.admin');
 
-Route::get('/profesor/{id}/inicio', [ProfesorController::class,'perfil'])
-    ->middleware('auth.admin')
-    ->name('admin.profesor.inicio');
-Route::get('/profesor/{id}/cursos', [ProfesorController::class,'cursos'])
-    ->middleware('auth.admin')
-    ->name('admin.profesor.cursos');
+Route::get('admin/profesor/{id}/inicio', [ProfesorController::class,'perfil'])->middleware('auth.admin')->name('admin.profesor.inicio');
+Route::get('admin/profesor/{id}/cursos', [ProfesorController::class,'cursos'])->middleware('auth.admin')->name('admin.profesor.cursos');
 
 /* Alumnos */
 
-Route::get('alumnos/{aula_id}', [AdminController::class,'alumnos_aula'])
-    ->middleware('auth.admin')
-    ->name('admin.alumnos');
-
-Route::resource('alumnos',AlumnoController::class)
-    ->middleware('auth.admin');
-
-Route::get('/alumno/{id}/create', [AlumnoController::class,'create'])
-    ->middleware('auth.admin')
-    ->name('alumno.create');
-
-Route::get('/alumno/create', [AlumnoController::class,'createTodos'])
-    ->middleware('auth.admin')
-    ->name('alumno.createTodos');
-
-
+Route::get('admin/todos_los_alumnos', [AdminController::class,'todosLosAlumnos'])->middleware('auth.admin')->name('admin.alumnos'); 
+Route::get('alumnos/{aula_id}', [AdminController::class,'AlumnosPorAula'])->middleware('auth.admin')->name('admin.alumnosPorAula'); 
+Route::get('admin/alumno/{id}/nuevo', [AlumnoController::class,'create'])->middleware('auth.admin')->name('admin.alumno.create');  
+Route::post('admin/alumno/guardar', [AlumnoController::class,'store'])->middleware('auth.admin')->name('admin.alumno.store');
+Route::get('admin/alumno/{id}/editar', [AlumnoController::class,'edit'])->middleware('auth.admin')->name('admin.alumno.edit');
+Route::put('admin/alumno/{id}/actualizar', [AlumnoController::class,'update'])->middleware('auth.admin')->name('admin.alumno.update');
+Route::delete('admin/alumno/{id}/eliminar', [AlumnoController::class,'destroy'])->middleware('auth.admin')->name('admin.alumno.destroy');
+    
 /* Trabajadores */
 
-Route::get('admin/trabajadores', [AdminController::class,'trabajadores'])
-    ->middleware('auth.admin')
-    ->name('admin.trabajadores');
-
-Route::resource('trabajadores',TrabajadorController::class)
-    ->middleware('auth.admin');
+Route::get('admin/trabajadores', [AdminController::class,'trabajadores'])->middleware('auth.admin')->name('admin.trabajadores');
+Route::resource('trabajadores',TrabajadorController::class)->middleware('auth.admin');
    
 // Notas
 Route::get('/curso/{id}/agregar_notas', [NotaController::class,'create'])
@@ -166,26 +137,28 @@ Route::post('/agregando_asistencia', [AsistenciaController::class,'store'])
 
 //Posts
 
-Route::get('/posts',[PostController::class, 'index']);
+// Route::get('/posts',[PostController::class, 'index']);
 
-Route::resource('publicaciones',PostController::class)
-    ->middleware('auth.profesor');
+// Route::resource('publicaciones',PostController::class)->middleware('auth.profesor');
+
+
+
+
 
 Route::post('/post/post_delete',[PostController::class, 'eliminar_post'])   
     ->middleware('auth.profesor')
     ->name('post.delete');
 
-Route::get('/curso/{id}/crear_publicacion', [PostController::class,'create_profesor'])
-    ->middleware('auth.profesor') //admin y profesor
-    ->name('post.curso.create');
+Route::get('/curso/{id}/nueva/{tipo}', [PostController::class,'createPostCurso'])->middleware('auth.profesor')->name('post.curso.create');
 
-Route::post('/post/eliminar_post_crear', [PostController::class,'eliminar_post_crear'])
-    ->middleware('auth.profesor') //admin y profesor
-    ->name('post.delete.crear');
+Route::get('admin/nueva/{tipo}', [PostController::class,'create'])->middleware('auth.admin')->name('admin.post.create');
+Route::post('/post/eliminar_post_crear', [PostController::class,'eliminar_post_crear'])->middleware('auth.profesor')->name('post.delete.crear');
+Route::post('admin/post/guardar', [PostController::class,'store'])->middleware('auth.admin')->name('admin.post.store');
+Route::get('admin/{tipo}/{id}/editar', [PostController::class,'edit'])->middleware('auth.admin')->name('admin.post.edit');
+Route::post('/post/eliminar_post_editar', [PostController::class,'eliminar_post_editar'])->middleware('auth.profesor')->name('post.delete.editar');
+Route::post('admin/post/actualizar', [PostController::class,'update'])->middleware('auth.admin')->name('admin.post.update');
+Route::delete('admin/post/{id}/eliminar', [PostController::class,'destroy'])->middleware('auth.admin')->name('admin.post.destroy');
 
-Route::post('/post/eliminar_post_editar', [PostController::class,'eliminar_post_editar'])
-    ->middleware('auth.profesor') //admin y profesor
-    ->name('post.delete.editar');
 
 //Comentarios
 

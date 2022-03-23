@@ -9,8 +9,8 @@
 @section('content')
 
     <h1 class="titulo">Aulas</h1>
-    <a href="{{route('aula.create')}}" class="btn btn-success mb-4">Nuevo</a>
-    <div class="table-responsive">
+    <a href="{{route('admin.aula.create')}}" class="btn btn-success mb-4">Nuevo</a>
+    <div class="table-responsive p-1">
         <table id="table_id" class = "table table-hover">
             <thead>
                 <tr>
@@ -28,9 +28,9 @@
                         <td>{{$aula->codigo}}</td>
                         <td>{{ucwords($aula->aula)}}</td>								
                         <td>                           
-                            <form action="{{route('aula.destroy',$aula->id)}}" method="POST" class="botones formEliminar"> 
+                            <form action="{{route('admin.aula.destroy',$aula->id)}}" method="POST" class="botones formEliminar"> 
                                 <a href="/alumnos/{{$aula->id}}" class="btn btn-success">Entrar</a>
-                                <a href="/aula/{{$aula->id}}/edit" class="btn btn-warning">Editar</a>
+                                <a href="{{route('admin.aula.edit',$aula->id)}}" class="btn btn-warning">Editar</a>
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger">Eliminar</button>
@@ -49,6 +49,11 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.11.4/b-2.2.2/b-html5-2.2.2/b-print-2.2.2/datatables.min.js"></script>
     <script src="{{asset('js/datatable.js')}}"></script>
+    <script>
+        $.extend( $.fn.dataTable.defaults, {
+            order: []
+        });
+    </script>
     <script src="{{asset('js/sweetAlert.js')}}"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endsection

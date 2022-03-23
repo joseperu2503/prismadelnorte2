@@ -41,7 +41,7 @@ class AulaController extends Controller
         return view('admin.aulas.edit')->with('aula',$aula)->with('niveles',$niveles);
     }
 
-    public function update(Request $request, Aula $aula)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'codigo' => 'required',
@@ -49,14 +49,14 @@ class AulaController extends Controller
             'id_nivel' => 'required',
             'abreviatura' => 'required',
         ]);
-        
-        $aula_datos = $request->all();
-        $aula->update($aula_datos);
+        $aula = Aula::find($id);
+        $aula->update($request->all());
         return redirect()->route('admin.aulas');
     }
 
-    public function destroy(Aula $aula)
+    public function destroy($id)
     {
+        $aula = Aula::find($id);
         $aula->delete();
         return redirect()->route('admin.aulas');
     }

@@ -18,6 +18,13 @@ class Aula extends Model
 
     public function alumnos()
     {
-        return $this->hasMany(Alumno::class,'id_aula');
+        return $this->hasMany(Alumno::class,'id_aula')->orderBy('apellido_paterno','asc');
     }
+
+    public function cursos()
+    {
+        return $this->hasMany(Curso::class,'id_aula');
+    }
+
+
 }

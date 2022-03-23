@@ -7,7 +7,7 @@
 @section('content')
     <h1 class="titulo">Nueva Aula</h1>
     <div class="form-container">  
-        <form action="{{route('aula.store')}}" method="POST">
+        <form action="{{route('admin.aula.store')}}" method="POST">
             @csrf
             <label class="form-label">Código*</label>
             <input id="codigo" name="codigo" type="text" class="form-control" value="{{old('codigo')}}" required>

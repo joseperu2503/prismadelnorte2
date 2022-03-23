@@ -1,5 +1,5 @@
 <div class="dropdown">
-    <button class="form-select alumnos-boton" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style="width:250px;text-align:left">
+    <button class="form-select alumnos-boton w-100" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style="text-align:left">
         Todos los alumnos
     </button>
     <div class="dropdown-menu p-2" aria-labelledby="dropdownMenuButton1" style="width: max-content">

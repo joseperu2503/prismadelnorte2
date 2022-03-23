@@ -43,7 +43,7 @@
             <label class="form-label">Numero de evaluación</label>
             <input id="num_evaluacion" name="num_evaluacion" type="number" class="form-control mb-3" value="{{old('num_evaluacion')}}" required>                  
         </div>
-        <div class="table-responsive">
+        <div class="table-responsive p-1">
             <table class = "table table-hover">
                 <thead>
                     <tr>

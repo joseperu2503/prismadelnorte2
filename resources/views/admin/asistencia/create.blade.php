@@ -26,7 +26,7 @@
     </form>               
 </div>
 <h2 class = "titulo-2">Asistencias recien registradas </h2>
-<div class="table-responsive">
+<div class="table-responsive p-1">
     <table class = "table">
         <thead>
             <tr>
